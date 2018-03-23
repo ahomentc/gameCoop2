@@ -1,0 +1,28 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+    {% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+    {% block content %}
+    <main>
+        project stuff
+        <a href="">Project Management</a>
+        - can be project management software here
+        - or can be a link to external software management
+    </main>
+
+    <div id="projMenu">
+        <h1 style="text-align:center;">{{ category }}  Projects</h1>
+        <ul style="list-style: none;">
+            <li><a href="">proj1</a></li>
+            <li><a href="">proj2</a></li>
+            <li><a href="">proj3</a></li>
+            <br/>
+            <a href="">Create New Project</a>
+        </ul>
+
+    </div>
+    {% endblock %}
+
+</article>

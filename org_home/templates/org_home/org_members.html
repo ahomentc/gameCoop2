@@ -1,0 +1,13 @@
+{% include "home/base.html"  %}
+
+{% block content %}
+
+<br/><br/><a href = "{% url 'org_home:index' organization.id %}">< Back to {{ organization }} home</a><br/>
+
+<ul>
+{% for member in organization.members.all %}
+    <li>{{ member }}</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

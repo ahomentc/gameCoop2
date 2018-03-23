@@ -1,0 +1,45 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+    {% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+    {% block content %}
+    <main>
+        {% if user in category.members.all %}
+            <br/>
+            <a style="text-decoration:none;" href="">Info</a><br/>
+            {% if user in category.moderators.all %}
+                <a style="text-decoration:none;" href="">Moderator Access</a><br/>
+            {% endif %}
+            {% if category.closed_category %}
+                <a style="text-decoration:none;" href="{% url 'org_home:pendingMembersView' organization.id category.id %}">Pending Members</a><br/>
+            {% endif %}
+            <a style="text-decoration:none;" href="">Files</a><br/>
+        {% endif %}
+
+        {% if user in category.pending_members.all %}
+            <p>Pending membership</p>
+        {% endif %}
+
+        {% if user not in category.members.all %}
+            <br/>
+            <a style="text-decoration:none;" href="{% url 'org_home:joinCategory' organization.id category.id %}">Join</a><br/>
+            <a style="text-decoration:none;" href="">Info</a><br/>
+        {% endif %}
+
+        <a style="text-decoration:none;" href="{% url 'org_home:membersView' organization.id category.id %}">Members</a><br/>
+        <a style="text-decoration:none;" href="{% url 'org_home:modsView' organization.id category.id %}">Moderators</a><br/>
+        <a style="text-decoration:none;" href="">Positions</a>
+        <a style="text-decoration:none;" href="">Training</a>
+
+    </main>
+
+    <div id="feed">
+    <h2>Activity Feed</h2>
+        <a href="">Jared changed the logo</a> <a href="">Yay</a> <a href="">Nay</a> <a href="">Discuss</a>
+    </div>
+
+
+    {% endblock %}
+</article>

@@ -1,0 +1,15 @@
+{% include "home/base.html"  %}
+
+{% block content %}
+
+<br/><br/><a href = "{% url 'org_home:index' organization.id %}">< Back to {{ organization }} home</a><br/>
+
+{{ error_message }}
+
+<ul>
+{% for pending_member in organization.pending_members.all %}
+    <li>{{ pending_member }} <a href="{% url 'org_home:GrantOrgAccess' organization.id pending_member.id %}">Grant Access</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

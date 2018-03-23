@@ -1,0 +1,28 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+{% block content %}
+    <main>
+        <h1>{{ question.question_text }}</h1>
+
+        {{ error_message }}
+
+        {% if question.voters.all.count == 1 %}
+            <p>{{ question.voters.all.count }} member voted</p>
+        {% else %}
+            <p>{{ question.voters.all.count }} members voted</p>
+        {% endif %}
+        <p>{{ percent_voted }}% of members voted</p><br/>
+
+
+        <ul>
+        {% for choice in question.choice_set.all %}
+            <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+        {% endfor %}
+        </ul>
+    </main>
+{% endblock %}
+</article>

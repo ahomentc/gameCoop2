@@ -1,0 +1,17 @@
+{% include "home/base.html"  %}
+
+{% load static %}
+
+<h2>Organizations:</h2>
+
+{% if organizations_list %}
+    <ul>
+    {% for organization in organizations_list %}
+        <li> <a href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a> </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No organizations are available.</p>
+{% endif %}
+
+<a href = "{% url 'home:newOrganization' %}">Create a New Organization</a>

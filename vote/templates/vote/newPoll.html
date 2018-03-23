@@ -1,0 +1,57 @@
+<script>
+/*
+Add another choice to the form. Starts by assuming that there
+are two choices already on the form so counter is 2. There is
+a maximum number of choices available which is currenty 10
+*/
+
+counter = 2;
+var limit = 10;
+function addChoice(divName){
+    if (counter == limit)  {
+              alert("You have reached the limit of adding " + counter + " choices.");
+         }
+    else {
+         var newdiv = document.createElement('div');
+         newName = 'choice_' + String(counter+1)
+         oldName = 'choice_' + String(counter)
+
+         if (!document.getElementById(oldName).value){
+             newdiv.innerHTML = "Choice " + (counter + 1) + ": " + "<input type='text' name = " + newName + " id = " + newName + " onkeydown=\"addChoice('forms')\">";
+             document.getElementById(divName).appendChild(newdiv);
+             counter++;
+             document.getElementById(oldName).removeAttribute("onkeydown");
+             }
+         }
+    }
+</script>
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+{% block content %}
+    <main>
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+        <!--Form with 1 question and a minimum of two choices. Is sent to the submitNewPoll View-->
+
+        <form action="{% url 'vote:submitNewPoll' organization.id category.id %}" method="post">
+        {% csrf_token %}
+            <h1>Create a new Poll</h1>
+            <div id="forms">
+                <label>Question: </label>
+                <input type="text" name="question" id="question"/><br/>
+                <label>Choice 1: </label>
+                <input type="text" name="choice_1" id="choice_1"/><br/>
+                <label>Choice 2: </label>
+                <input type="text" name="choice_2" id="choice_2" onkeydown="addChoice('forms')"/>
+            </div>
+            <!--<input type="button" onclick="addChoice('forms')" value="Add Choice"/>-->
+            <input type="submit" value="Submit"/>
+        </form>
+    </main>
+{% endblock %}
+</article>

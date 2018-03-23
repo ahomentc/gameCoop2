@@ -1,0 +1,17 @@
+{% include "home/base.html"  %}
+<br/><br/>
+{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+{% block content %}
+
+<br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
+
+{{ error_message }}
+
+<ul>
+{% for pending_member in category.pending_members.all %}
+    <li>{{ pending_member }} <a href="{% url 'org_home:GrantAccess' organization.id category.id pending_member.id %}">Grant Access</a></li>
+{% endfor %}
+</ul>
+
+{% endblock %}

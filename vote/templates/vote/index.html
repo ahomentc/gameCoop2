@@ -1,0 +1,29 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+{% block content %}
+    <main>
+        <h2>{{ category.category_name }} Polls</h2>
+
+        <!--<h2>Moderator Created Polls:</h2>-->
+
+        <!--<h2>Member Created Polls:</h2>-->
+
+        {% if latest_question_list %}
+            <ul>
+            {% for question in latest_question_list %}
+                <!--this works but category is not being passed-->
+                <li><a href="{% url 'vote:detail' organization.id category.id question.id %}">{{ question.question_text }}</a></li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>No polls are available.</p>
+        {% endif %}
+
+        <a href = "{% url 'vote:newPoll' organization.id category.id %}">Create New Poll</a>
+    </main>
+{% endblock %}
+</article>

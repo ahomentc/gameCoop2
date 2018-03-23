@@ -1,0 +1,50 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<html>
+  <article>
+  {% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+      {% block body %}
+      <main>
+          <h1>{{ category }} Discussion</h1>
+          <a href="{% url 'discuss:Index' organization.id category.id %}">General</a>
+          <a href="{% url 'discuss:IdeaDiscussion' organization.id category.id %}">Ideas</a>
+          <a href="{% url 'discuss:VotingDiscussion' organization.id category.id %}">Decisions</a>
+
+          <a href="{% url 'discuss:newPost' organization.id category.id %}">Submit new Post</a><br/>
+
+          <br/>{{ no_posts_message }}
+
+          {% for post in postsList %}
+          <div id= {{ post.id }}>
+              <br/><a href="{% url 'discuss:IndividualPost' organization.id category.id post.id %}"> {{ post.title }}</a><button id="expPost{{post.id}}" onclick="expandPost('{{ post.id }}', '{{ post.content }}')">v</button>
+          </div>
+          {% endfor %}
+      </main>
+      <script>
+      function expandPost(divName,content){
+          var newdiv = document.createElement('div');
+          newdiv.id = "closePost" + divName;
+          var checkOnPage =  document.getElementById(newdiv.id);
+          if(checkOnPage == null){
+              newdiv.innerHTML = content + "<br/><input type=button value='^' onclick=\"contractPost('" + divName + "')\"/>";
+              document.getElementById(divName).appendChild(newdiv);
+              document.getElementById("expPost" + divName).style.display='none';
+              }
+          }
+
+      function contractPost(divName){
+          document.getElementById("closePost" + divName).remove();
+          document.getElementById("expPost" + divName).style.display = '';
+          }
+
+      </script>
+
+      {% block content %}
+      {% endblock %}
+      {% endblock %}
+      {% block extra_body %}
+      {% endblock %}
+  </article>
+</html>
+

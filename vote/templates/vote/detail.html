@@ -1,0 +1,29 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<article>
+{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+
+{% block content %}
+
+    <main>
+        <h1>{{ question.question_text }}</h1>
+
+        {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+        <a href="">Discuss Pros and Cons</a><br/><br/>
+
+        <form action="{% url 'vote:vote' organization.id category.id question.id %}" method="post">
+        {% csrf_token %}
+        {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br/>
+        {% endfor %}
+        <input type="submit" value="Vote" />
+        </form>
+
+        <a href="{% url 'vote:index' organization.id category.id %}">Back</a></li>
+    </main>
+
+{% endblock %}
+</article>

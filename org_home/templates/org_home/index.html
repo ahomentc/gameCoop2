@@ -1,0 +1,38 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+{% if user in organization.members.all %}
+    <article>
+        {% include "org_home/base.html" with organization=organization categories_list=categories_list %}
+        {% block content %}
+            <main>
+                <h1>{{ organization }}</h1>
+                <p>------------------------</p>
+                {% if organization.closed_organization %}
+                    <a style="text-decoration:none;" href="{% url 'org_home:orgPendingMembersView' organization.id %}">Pending Members</a><br/>
+                {% endif %}
+                <a style="text-decoration:none;" href="{% url 'org_home:orgMembersView' organization.id %}">Members</a>
+                <p>------------------------</p>
+                {% if user.is_authenticated %}
+                {% if member_categories_list %}
+                <h3> Your branches:</h3>
+                    <ul>
+                    {% for category in member_categories_list %}
+                        <li> <a style="text-decoration:none;" href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a> </li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+                <p>------------------------</p>
+                {% endif %}
+                <a href = "{% url 'org_struct:index' organization.id %}">Organizational Structure</a><br/>
+            </main>
+        {% endblock %}
+    </article>
+{% elif user in organization.pending_members.all %}
+    <p>Pending membership</p>
+    <a style="text-decoration:none;" href="">Info</a><br/>
+{% else %}
+    <a style="text-decoration:none;" href="{% url 'org_home:joinOrganization' organization.id %}">Join</a><br/>
+    <a style="text-decoration:none;" href="">Info</a><br/>
+{% endif %}
