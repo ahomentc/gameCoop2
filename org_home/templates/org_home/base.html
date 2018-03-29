@@ -1,30 +1,24 @@
-<!DOCTYPE html>
-<html>
-  {% load static %}
-  <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
-  <body>
-    <header>
-        {% include "home/base.html"  %}
-    </header>
+{% extends "home/base.html"  %}
+{% load static %}
+
+{% block content %}
 
     {% if category %}
         <div id="navbar">
-            <a style="font-size: 29px; text-decoration:none;" href="{% url 'org_home:individualCategory' organization.id category.id %}">{{ category }}</a>
+            <a style="font-size: 29px; text-decoration:none; padding-right:5px;" href="{% url 'org_home:individualCategory' organization.id category.id %}">{{ category }}</a>
             <!--if user not part of this then show join-->
             <!--or else don't show work or polls and maybe even discussion-->
             {% if user in category.members.all %}
-                <label>  |  </label>
-                <a style="text-decoration:none;" href="{% url 'org_work:index' organization.id category.id %}">Work</a>
-                <label>  |  </label>
-                <a style="text-decoration:none;" href="{% url 'vote:index' organization.id category.id %}">Vote</a>
-                <label>  |  </label>
-                <a style="text-decoration:none;" href="{% url 'discuss:Index' organization.id category.id %}">Discuss</a>
+                <label>|</label>
+                <a  style="text-decoration:none; padding-left:5px; padding-right:5px" href="{% url 'org_work:index' organization.id category.id %}">Work</a>
+                <label>|</label>
+                <a style="text-decoration:none; padding-left:5px; padding-right:5px" href="{% url 'discuss:Index' organization.id category.id %}">Discuss</a>
+                <label>|</label>
+                <a style="text-decoration:none; padding-left:5px;" href="{% url 'vote:index' organization.id category.id %}">Vote</a>
             {% endif %}
         </div>
     {% endif %}
-    <div id="GroupRoots">
-        <a style="display:block; font-size:30; text-align:center; text-decoration:none " href = "{% url 'home:index' %}">Group Roots</a>
-    </div>
+
     <aside>
         {% if organization_id != "" %}
         <a style="display:block; text-align:center; font-size: 25; text-decoration:none;" href = "{% url 'org_home:index' organization.id %}">{{ organization }}</a>
@@ -87,7 +81,6 @@
                 }
         </script>
 
-        <!--<label style="display:block; font-size: 20; text-align:center;">Branches<button id="exp" onclick="expand('id')">v</button></label>-->
         {% if categories_list %}
             {% for category in categories_list %}
                 {% if category.parent == None or category.parent == "Executive" %}
@@ -103,9 +96,7 @@
         <br/>
         <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newCategory' organization.id %}">Create New Branch</a>
     </aside>
-    {% block body %}
+    {% block content2 %}
     {% endblock %}
-    {% block extra_body %}
-    {% endblock %}
-  </body>
-</html>
+
+{% endblock %}

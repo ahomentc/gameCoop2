@@ -1,17 +1,19 @@
+{% extends "org_home/base.html" %}
 {% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-<article>
-{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
-{% block content %}
+    <main>
+    <br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
+        <ul>
+        {% for member in category.members.all %}
+            <li>{{ member }}</li>
+        {% endfor %}
+        </ul>
+    </main>
 
-<main>
-<br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
-    <ul>
-    {% for member in category.members.all %}
-        <li>{{ member }}</li>
-    {% endfor %}
-    </ul>
-</main>
+{% endwith %}
 {% endblock %}
-</article>
+
