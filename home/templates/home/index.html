@@ -1,15 +1,12 @@
-{% include "home/base.html"  %}
+{% extends "home/base.html"  %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-<article>
-    <div id="GroupRoots">
-        <a style="display:block; font-size:30; text-align:center; text-decoration:none " href = "{% url 'home:index' %}">Group Roots</a>
-    </div>
+{% block content %}
 
     <div id="navbar">
-        <a href="{% url 'home:organizations' %}"> Organizations </a>
-        <a href="">Projects</a>
+        <a style="padding-right:5px" href="{% url 'home:organizations' %}"> Organizations </a>
+        <label>|</label>
+        <a style="padding-left:5px" href="">Projects</a>
     </div>
 
     <main>
@@ -27,4 +24,5 @@
     <div id="tasks">
         Your tasks
     </div>
-</article>
+
+{% endblock %}

@@ -2,15 +2,15 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User
-from home import models as home_models
-from org_home import models as org_home_models
-
+# from home import models as home_models
+# from org_home.models import Categories
+# from django.contrib.auth.models import User
+#
 class Projects(models.Model):
-    organization = models.ForeignKey(home_models.Organizations, blank=True, null=True, on_delete=models.CASCADE)
-    category = models.ForeignKey(org_home_models.Categories, blank=True, null=True, on_delete=models.CASCADE)
+#     organization = models.ForeignKey(home_models.Organizations, on_delete=models.CASCADE, blank=True, null=True)
+#     category = models.ForeignKey(Categories, on_delete=models.CASCADE, blank=True, null=True)
+#     parent = models.ForeignKey("self", blank=True, null=True)
     description = models.TextField(blank=True,null=True)
-    parent = models.CharField(max_length=100, blank=True, null=True)
     project_name = models.CharField(max_length=100)
 
     def __str__(self):

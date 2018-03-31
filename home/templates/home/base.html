@@ -1,20 +1,25 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    {% block body %}
-    <div style="float: right; padding: 20px;">
-        {% if user.is_authenticated %}
-        <a style="text-decoration:none" href="{% url 'user_profiles:ProfileView' user %}">Profile |</a>
-        <a style="text-decoration:none" href="{% url 'account_logout' %}">Sign Out</a>
-        {% else %}
-        <a style="text-decoration:none" href="{% url 'account_login' %}">Sign In |</a>
-        <a style="text-decoration:none" href="{% url 'account_signup' %}">Sign Up</a>
-        {% endif %}
-    </div>
-    {% block content %}
-    {% endblock %}
-    {% endblock %}
-    {% block extra_body %}
-    {% endblock %}
-  </body>
-</html>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'home/style.css' %}" />
+
+<article>
+    <header>
+        <div id="AccountControls" style="float:right; padding:20px;">
+            {% if user.is_authenticated %}
+                <a style="text-decoration:none" href="{% url 'user_profiles:ProfileView' user %}">Profile |</a>
+                <a style="text-decoration:none" href="{% url 'account_logout' %}">Sign Out</a>
+            {% else %}
+                <a style="text-decoration:none" href="{% url 'account_login' %}">Sign In |</a>
+                <a style="text-decoration:none" href="{% url 'account_signup' %}">Sign Up</a>
+            {% endif %}
+        </div>
+
+        <div id="GroupRoots">
+            <a style="display:block; font-size:30; text-align:center; float:left; padding-left: 25px; text-decoration:none " href = "{% url 'home:index' %}">Group Roots</a>
+        </div>
+    </header>
+        {% block content %}
+        {% endblock %}
+</article>
+
+
+

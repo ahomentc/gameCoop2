@@ -1,10 +1,10 @@
+{% extends "org_home/base.html" %}
 {% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-<article>
-{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+    <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-{% block content %}
     <main>
         <h1>{{ question.question_text }}</h1>
 
@@ -24,5 +24,6 @@
         {% endfor %}
         </ul>
     </main>
+
+{% endwith %}
 {% endblock %}
-</article>

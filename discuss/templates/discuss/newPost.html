@@ -1,11 +1,17 @@
-{% include "home/base.html"  %}
+{% extends "home/base.html"  %}
 
-<h1>Create a new Post</h1>
+{% block content %}
 
-<form action="{% url 'discuss:submitNewPost' organization.id category.id %}" method="post">
-    {% csrf_token %}
-    <table border="0">
-        {{ form }}
-    </table>
-    <input type="submit" value="Submit" />
-</form>
+    <main>
+        <h1>Create a new Post</h1>
+
+        <form action="{% url 'discuss:submitNewPost' organization.id category.id %}" method="post">
+            {% csrf_token %}
+            <table border="0">
+                {{ form }}
+            </table>
+            <input type="submit" value="Submit" />
+        </form>
+    </main>
+
+{% endblock %}

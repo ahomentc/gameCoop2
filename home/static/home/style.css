@@ -1,3 +1,89 @@
+html, body {
+    margin: 0;
+    height: 100%;
+    background-color: #f4f4f7;
+}
+
+article {
+  display: grid;
+  grid-template-columns: 20% 60% 20%;
+  grid-template-rows: 70px min-content;
+  grid-gap: 5px;
+  margin: 0;
+  width:100%;
+  height:100%;
+  margin-top:10px;
+}
+
+header{
+    grid-column:1/4;
+    grid-row:1;
+}
+
+#GroupRoots {
+    grid-column:1;
+    grid-row: 1;
+    margin-top: 8px;
+}
+
+#AccountControls{
+    margin-right:10px;
+}
+
+#navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: 2/3;
+    grid-row: 1;
+    width: 450px;
+    height: 40px;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    margin-left: 25%;
+    border-radius: 5px;
+    background-color: #f6f6f6;
+}
+
+#navbar:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
+main {
+    padding: 0 20 20 20;
+    grid-column: 2/3;
+    grid-row: 2;
+    align-self: start;
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    background-color:white;
+    margin-top: 20px;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
+#tasks {
+    padding: 20 20 20 20;
+    grid-column: 2/3;
+    grid-row: 3;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    width: 60%;
+    align-self: start;
+    background-color:white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
 a {
     text-decoration: none;
 }
@@ -8,45 +94,6 @@ a:hover {
     color: #2A5DB0;
 }
 
-article {
-  display: grid;
-  grid-template-columns: 1fr 6fr 1fr;
-  grid-template-rows: 0px 47px 130px;
-  margin: 0;
-  width:100%;
-  height:100%;
-  margin-top:10px;
-}
-
-main {
-  padding: 20 20 20 20;
-  grid-column: 2;
-  grid-row: 3;
-  align-self: start;
-  width: 42%;
-  background-color:white;
-  margin-top: 20px;
-  margin-left: 19%;
-  border-style: solid;
-  border-color: #d6d6d8;
-  border-width: thin;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
-}
-
-menu {
-  grid-column: 2/10;
-  grid-row: 2/10;
-}
-
-#GroupRoots {
-    grid-column:1;
-    grid-row: 1;
-    margin-top: 8px;
-}
-
-html, body {
-    margin: 0;
-    height: 100%;
-    background-color: #f4f4f7;
+ul{
+    list-style-type: none;
 }

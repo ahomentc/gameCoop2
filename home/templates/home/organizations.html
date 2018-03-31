@@ -1,17 +1,28 @@
-{% include "home/base.html"  %}
-
+{% extends "home/base.html"  %}
 {% load static %}
 
-<h2>Organizations:</h2>
+{% block content %}
 
-{% if organizations_list %}
-    <ul>
-    {% for organization in organizations_list %}
-        <li> <a href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a> </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No organizations are available.</p>
-{% endif %}
+<div id="navbar">
+    <a style="padding-right:5px" href="{% url 'home:organizations' %}"> Organizations </a>
+    <label>|</label>
+    <a style="padding-left:5px" href="">Projects</a>
+</div>
 
-<a href = "{% url 'home:newOrganization' %}">Create a New Organization</a>
+<main>
+    <h3>Organizations:</h3>
+
+    {% if organizations_list %}
+        <ul>
+        {% for organization in organizations_list %}
+            <li> <a href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a> </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No organizations are available.</p>
+    {% endif %}
+
+    <a href = "{% url 'home:newOrganization' %}">Create a New Organization</a>
+</main>
+
+{% endblock %}

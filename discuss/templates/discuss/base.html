@@ -1,10 +1,10 @@
+{% extends "org_home/base.html" %}
 {% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-<html>
-  <article>
-  {% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
-      {% block body %}
       <main>
           <h1>{{ category }} Discussion</h1>
           <a href="{% url 'discuss:Index' organization.id category.id %}">General</a>
@@ -39,12 +39,8 @@
           }
 
       </script>
+      {% block content3 %}
+      {% endblock %}
 
-      {% block content %}
-      {% endblock %}
-      {% endblock %}
-      {% block extra_body %}
-      {% endblock %}
-  </article>
-</html>
-
+{% endwith %}
+{% endblock %}

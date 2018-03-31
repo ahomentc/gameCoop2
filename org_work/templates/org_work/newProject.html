@@ -1,10 +1,126 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "home/base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/new_category_style.css' %}" />
+
+    <script>
+        function addExpandButton(id,name){
+            subCategories = subCategoriesAndId(name);
+            if (subCategoriesAndId(name)[0].length != 0){
+                document.getElementById(id).innerHTML += "<button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">v</button></div>";
+            }
+        }
+        function subCategoriesAndId(parent_name){
+            var subCategoryList = [];
+            var subCategoryIdList = [];
+            {% for category in categories_list %}
+                if ("{{ category.parent }}" == parent_name){
+                    var c = "{{ category.category_name }}";
+                    var id = "{{ category.id }}";
+                    subCategoryList.push(c);
+                    subCategoryIdList.push(id);
+                }
+            {% endfor %}
+            return [subCategoryList,subCategoryIdList]
+        }
+        <!--Will expand to show the list of subcategories-->
+        function expand(divName,parent_name){
+            subCategories = subCategoriesAndId(parent_name);
+            var subCategoryList = subCategories[0];
+            var subCategoryIdList = subCategories[1];
+            var newdiv = document.createElement('div');
+            newdiv.id = "close" + divName;
+            var checkOnPage =  document.getElementById(newdiv.id);
+            if (checkOnPage == null){
+                for (c in subCategoryList){
+                    id = subCategoryIdList[c];
+                    name = subCategoryList[c];
+                    url = "{% url 'org_home:individualCategory' organization_id=organization.id category_id=123 %}".replace("123", subCategoryIdList[c]);
+                    if (subCategoriesAndId(name)[0].length != 0){
+                        newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                        <input type='radio' id='choice" + id + "' name='parent' value='" + id + "'/>\
+                        <label>      " + name + "</label>\
+                        <button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">v</button></div>";
+                    }
+                    else{
+                        newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                        <input type='radio' id='choice" + id + "' name='parent' value='" + id + "'/>\
+                        <label>      " + name + "</label";
+                    }
+
+                }
+                document.getElementById(divName).innerHTML += "<input id='closeButton" + divName + "' type=button value='^' onclick=\"contract('" + divName + "')\"/>";
+                document.getElementById(divName).appendChild(newdiv);
+                document.getElementById("exp" + divName).style.display='none';
+                }
+            }
+        function contract(divName){
+            document.getElementById("close" + divName).remove();
+            document.getElementById("closeButton" + divName).remove();
+            document.getElementById("exp" + divName).style.display = '';
+            }
+    </script>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    {% if category == None %}
+    <form action="{% url 'org_home:submitNewCategory' organization.id %}" method="post">
+    {% else %}
+    <form action="{% url 'org_home:submitNewSubCategory' organization.id category.id %}" method="post">
+    {% endif %}
+    {% csrf_token %}
+        <div id="parentSelect">
+            <h2>Choose a Parent</h2>
+            <input type="radio" name="parent" id="choice-1" value="-1"/><label>      No Parent</label>
+            {% if categories_list %}
+                {% for category in categories_list %}
+                    {% if category.parent == None %}
+                        <div id= {{ category.id }}>
+                            <input type="radio" id="choice{{ category.id }}" name="parent" value="{{ category.id }}"/><label>      {{ category }}</label>
+                            <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>No categories are available.</p>
+            {% endif %}
+        </div>
+        <main>
+            <h1>Details</h1>
+            <div style="padding-left:10px;" id="forms">
+                <label>Name: </label>
+                <input type="text" name="new_category" id="new_category"/><br/><br/>
+                <br/><br/><label>Need permission to join? </label>
+                <input type="checkbox" onclick="permission()" name="closed_category" id="closed_category"/><br/><br/>
+                <label id="1" style="display:none">Who can grant permission? </label><br/>
+                <label id="2" style="display:none">All Members</label>
+                <input type="radio" name="access" id="members_access" value="all_members" style="display:none"/><br/>
+                <label id="3" style="display:none">Moderator</label>
+                <input type="radio" name="access" id="moderators_access" value="moderators" style="display:none"/><br/><br/>
+            </div>
+            <input style="float:right;" type="submit" value="Submit"/>
+        </main>
+    </form>
+
+<script>
+function permission(){
+
+    if (document.getElementById('closed_category').checked){
+        document.getElementById("members_access").style.display = '';
+        document.getElementById("moderators_access").style.display = '';
+        document.getElementById("1").style.display = '';
+        document.getElementById("2").style.display = '';
+        document.getElementById("3").style.display = '';
+        }
+    else{
+        document.getElementById("members_access").style.display = 'none';
+        document.getElementById("moderators_access").style.display = 'none';
+        document.getElementById("1").style.display = 'none';
+        document.getElementById("2").style.display = 'none';
+        document.getElementById("3").style.display = 'none';
+        }
+    }
+</script>
+
+{% endblock %}

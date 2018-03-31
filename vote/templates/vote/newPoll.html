@@ -1,3 +1,10 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+    <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
 <script>
 /*
 Add another choice to the form. Starts by assuming that there
@@ -26,13 +33,6 @@ function addChoice(divName){
     }
 </script>
 
-{% load static %}
-<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
-
-<article>
-{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
-
-{% block content %}
     <main>
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
@@ -53,5 +53,6 @@ function addChoice(divName){
             <input type="submit" value="Submit"/>
         </form>
     </main>
+
+{% endwith %}
 {% endblock %}
-</article>

@@ -1,17 +1,21 @@
-{% include "home/base.html"  %}
-<br/><br/>
-{% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
+{% extends "org_home/base.html" %}
+{% load static %}
 
-{% block content %}
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-<br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
+<main>
+    <br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
 
-{{ error_message }}
+    {{ error_message }}
 
-<ul>
-{% for pending_member in category.pending_members.all %}
-    <li>{{ pending_member }} <a href="{% url 'org_home:GrantAccess' organization.id category.id pending_member.id %}">Grant Access</a></li>
-{% endfor %}
-</ul>
+    <ul>
+    {% for pending_member in category.pending_members.all %}
+        <li>{{ pending_member }} <a href="{% url 'org_home:GrantAccess' organization.id category.id pending_member.id %}">Grant Access</a></li>
+    {% endfor %}
+    </ul>
+</main>
 
+{% endwith %}
 {% endblock %}

@@ -8,7 +8,8 @@ from org_work.models import Projects
 
 class Categories(models.Model):
     organization = models.ForeignKey(home_models.Organizations, on_delete=models.CASCADE, blank=True, null=True)
-    parent = models.CharField(max_length=100, blank=True, null=True)
+    # parent = models.CharField(max_length=100, blank=True, null=True)
+    parent = models.ForeignKey("self", blank=True, null=True)
     category_name = models.CharField(max_length=100)
     pending_members = models.ManyToManyField(User,related_name='category_pending_member')
     members = models.ManyToManyField(User,related_name='category_member')
