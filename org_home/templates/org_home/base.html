@@ -3,6 +3,7 @@
 
 {% block content %}
 
+    <!-- Navigation bar at top of the page. To navigate between work, discuss, and vote pages. Only appears if in category -->
     {% if category %}
         <div id="navbar">
             <a style="font-size: 29px; text-decoration:none; padding-right:5px;" href="{% url 'org_home:individualCategory' organization.id category.id %}">{{ category }}</a>
@@ -18,6 +19,8 @@
             {% endif %}
         </div>
     {% endif %}
+
+    <!-- aside at left part of screen. Contains the category navigator and project navigator. -->
     <aside>
         <div id="categoriesNav">
             {% if organization_id != "" %}
@@ -74,6 +77,7 @@
                         document.getElementById("exp" + divName).style.display='none';
                         }
                     }
+                // contract list of subcategories
                 function contract(divName){
                     document.getElementById("close" + divName).remove();
                     document.getElementById("closeButton" + divName).remove();
@@ -81,25 +85,56 @@
                     }
             </script>
 
+            <!-- Displays nested categories and expanding till current page category -->
             {% if categories_list %}
                 {% for category in categories_list %}
+
+                    <!-- The executive category -->
                     {% if category.parent == None %}
                         <div id= {{ category.id }}>
                             <a style='margin-left: 20px; text-decoration:none' href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a>
+                            <!-- Need to add this here in order to get button that contracts and expands -->
                             <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
-                            <script>expand({{ category.id }}, "Executive");</script>
+                            <script>expand('{{ category.id }}', '{{ category }}');</script>
                         </div>
                     {% endif %}
+                {% endfor %}
+
+                <!-- Expand till get to current page category -->
+                {% for ancestor in ancestor_categories_list %}
+                    <!-- Don't need addExpandButton here because it is automatically added when executive calls it and expand
+                     adds it automatically. (No expand called on executive because it is the base so need to manually add it there) -->
+                    <script>expand('{{ ancestor.id }}', '{{ ancestor }}');</script>
                 {% endfor %}
             {% else %}
                 <p>No categories are available.</p>
             {% endif %}
+
             <br/>
-            <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newCategory' organization.id %}">Create New Branch</a>
+            {% if category %}
+                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newSubCategory' organization.id category.id %}">Create New Branch</a>
+            {% else %}
+                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newCategory' organization.id %}">Create New Branch</a>
+            {% endif %}
         </div>
-        {% block aside %}
-        {% endblock %}
+
+        <!-- Project sidebar -->
+        <!-- If no category (at org homepage) then show all the projects in nested way -->
+        <div id="projMenu">
+            <h1 style="text-align:center;">{{ category }}  Projects</h1>
+            <ul style="list-style: none;">
+                <li><a href="">proj2</a></li>
+                <li><a href="">proj3</a></li>
+            <br/>
+            {% if category %}
+                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_work:newSubCategoryProject' organization.id category.id %}">Create New Branch</a>
+            {% else %}
+                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_work:newProject' organization.id %}">Create New Branch</a>
+            {% endif %}
+        </ul>
+        </div>
     </aside>
+
     {% block content2 %}
     {% endblock %}
 

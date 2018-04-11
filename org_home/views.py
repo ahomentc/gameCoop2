@@ -3,16 +3,33 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
 from django.views import generic, View
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Categories
 from home.models import Organizations
 from .forms import ParentCategories
+
+def getCategoryAncestors(category_id):
+    currentCategory = get_object_or_404(Categories,pk=category_id)
+    ancestors = []
+    while currentCategory.parent != None:
+        ancestors.insert(0,currentCategory.parent)
+        currentCategory = currentCategory.parent
+    return ancestors
+
+@csrf_exempt
+def userInCategory(request):
+    category_id = int(request.POST.get('category_id'))
+    category = get_object_or_404(Categories, pk=category_id)
+    if request.user in category.members.all():
+        return HttpResponse(1)
+    return HttpResponse(0)
 
 # org_home page of a coop
 @login_required
@@ -35,23 +52,26 @@ def IndividualCategoryView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
     subCategories = Categories.objects.filter(parent=category)
-    return render(request,'org_home/individualCategory.html',{'organization':organization,'category': category,'subCategories':subCategories,
-        'categories_list':Categories.objects.filter(organization=organization)})
+    ancestorCategories = getCategoryAncestors(category_id)
+    return render(request,'org_home/individualCategory.html',{'organization':organization,
+                                                            'category': category,
+                                                            'subCategories':subCategories,
+                                                            'categories_list':Categories.objects.filter(organization=organization,),
+                                                            'ancestor_categories_list':ancestorCategories})
 
 # page to create a new category/root/branch
 @login_required
 def newCategoryView(request,organization_id,category_id=None):
     organization = get_object_or_404(Organizations,id=organization_id)
+    ancestorCategories = None
+    category = None
     if category_id != None:
         category = get_object_or_404(Categories,pk=category_id)
-    else:
-        category = None
-    form = ParentCategories()
-    parentsList = [("None","None")]
-    for cat in Categories.objects.filter(organization=organization,parent=category):
-        parentsList.append((cat.category_name,cat.category_name))
+        ancestorCategories = getCategoryAncestors(category_id)
+
     return render(request, 'org_home/newCategory.html',{'organization':organization,'category':category,
-                                                        'categories_list':Categories.objects.filter(organization=organization)})
+                                                        'categories_list':Categories.objects.filter(organization=organization),
+                                                            'ancestor_categories_list':ancestorCategories})
 
 # submit a new category
 @login_required
@@ -120,6 +140,7 @@ def submitNewCategory(request,organization_id,category_id=None):
 def membersView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     return render(request,'org_home/members.html',{'organization':organization,'category': category,
                                                    'categories_list':Categories.objects.filter(organization=organization)})
 
@@ -129,6 +150,7 @@ def pendingMembersView(request,organization_id,category_id):
     # this html is also called in GrantAccess
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     return render(request,'org_home/pendingMembers.html',{'organization':organization,'category': category,
                                                           'categories_list':Categories.objects.filter(organization=organization)})
 
@@ -137,6 +159,7 @@ def pendingMembersView(request,organization_id,category_id):
 def modsView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     return render(request,'org_home/members.html',{'organization':organization,'category': category,
                                                    'categories_list':Categories.objects.filter(organization=organization)})
 

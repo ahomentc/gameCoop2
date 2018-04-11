@@ -1,22 +1,6 @@
 {% extends "org_home/base.html" %}
 {% load static %}
 
-{% block aside %}
-{% with organization=organization categories_list=categories_list %}
-
-    <div id="projMenu">
-        <h1 style="text-align:center;">{{ category }}  Projects</h1>
-        <ul style="list-style: none;">
-            <li><a href="">proj2</a></li>
-            <li><a href="">proj3</a></li>
-            <br/>
-            <a href="">Create New Project</a>
-        </ul>
-    </div>
-
-{% endwith %}
-{% endblock %}
-
 {% block content2 %}
 {% with organization=organization categories_list=categories_list %}
 

@@ -7,6 +7,8 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/$', views.IndexView, name='index'),
 
     url(r'^(?P<organization_id>\d+)/categories$', views.CategoryView, name='categories'),
+
+    # new category
     url(r'^(?P<organization_id>\d+)/newCategory.html$',views.newCategoryView,name='newCategory'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/newCategory.html$',views.newCategoryView,name='newSubCategory'),
     url(r'^(?P<organization_id>\d+)/submitNewCategory$',views.submitNewCategory,name='submitNewCategory'),
@@ -26,4 +28,7 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/moderators', views.modsView, name='modsView'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/pendingMembers$', views.pendingMembersView, name='pendingMembersView'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<pending_member_id>\d+)/grant_access$', views.GrantAccess, name='GrantAccess'),
+
+    #ajax
+    url(r'^userInCategory',views.userInCategory,name='userInCategory'),
 ]

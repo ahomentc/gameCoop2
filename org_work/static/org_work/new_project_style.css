@@ -1,0 +1,66 @@
+form{
+    margin-top: 10px;
+    grid-column: 2;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#categorySelect {
+    height: 280px;
+    grid-column: 1;
+    grid-row:1/2;
+    background-color: white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    margin-left:0;
+    width: 200px;
+    padding: 5px 10px;
+}
+
+#parentProject {
+    height: 280px;
+    grid-column: 2;
+    grid-row:1/2;
+    background-color: white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    margin-left:0;
+    width: 200px;
+    padding: 5px 10px;
+}
+
+#details {
+    grid-column: 3;
+    grid-row:1/2;
+    height: 280px;
+    margin: 0 0 0 0;
+    padding: 10 10 0 10;
+    align-self: start;
+    width: 200px;
+    background-color:white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
+#notInCat{
+    color: #a6a6a6;
+}
+
+h1,h2,h3,h6{
+    text-align: center;
+}

@@ -10,8 +10,11 @@ urlpatterns = [
 
     # create new project
 
-    # url(r'^(?P<organization_id>\d+)/newCategory.html$',views.newCategoryView,name='newCategory'),
-    # url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/newCategory.html$',views.newCategoryView,name='newSubCategory'),
+    url(r'^(?P<organization_id>\d+)/newProject.html$',views.newProjectView,name='newProject'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/newProject.html$',views.newProjectView,name='newSubCategoryProject'),
     # url(r'^(?P<organization_id>\d+)/submitNewCategory$',views.submitNewCategory,name='submitNewCategory'),
     # url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/submitNewCategory$',views.submitNewCategory,name='submitNewSubCategory'),
+
+    # ajax
+    url(r'^ProjectsInCommon', views.ProjectsInCommon, name='ProjectsInCommon'),
 ]

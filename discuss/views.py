@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 from org_home import models as org_home_models
 from django.contrib.auth.decorators import login_required
+from org_home.views import getCategoryAncestors
 
 
 from org_home.models import Categories
@@ -37,6 +38,7 @@ def is_member(func):
 def Index(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     no_posts_message = ''
     generalPostsList = Post.objects.filter(
             category=category,
@@ -45,13 +47,15 @@ def Index(request,organization_id,category_id):
     if len(generalPostsList) == 0:
         no_posts_message = "No posts here yet"
     return render(request,'discuss/index.html',{'organization':organization,'category': category,'postsList':generalPostsList,'no_posts_message':no_posts_message,
-                                                'categories_list':Categories.objects.filter(organization=organization)})
+                                                'categories_list':Categories.objects.filter(organization=organization),
+                                                'ancestor_categories_list': ancestorCategories})
 @is_member
 @login_required
 # the "idea" discussions
 def IdeaDiscussion(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     no_posts_message = ''
     ideaPostsList = Post.objects.filter(
             category=category,
@@ -67,6 +71,7 @@ def IdeaDiscussion(request,organization_id,category_id):
 def VotingDiscussion(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     no_posts_message = ''
     votingPostsList = Post.objects.filter(
             category=category,

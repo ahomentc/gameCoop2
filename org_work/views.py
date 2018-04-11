@@ -3,24 +3,29 @@ from __future__ import unicode_literals
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
 from django.views import generic, View
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from org_home.models import Categories
 from home.models import Organizations
 from .models import Projects
 from .forms import NewProjectForm
+from org_home.views import getCategoryAncestors
 
 @login_required
 def IndexView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     return render(request, 'org_work/index.html',{'organization': organization,'category':category,
-                                                  'categories_list':Categories.objects.filter(organization=organization)})
+                                                  'categories_list':Categories.objects.filter(organization=organization),
+                                                  'ancestor_categories_list': ancestorCategories})
 
 def ProjectView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
@@ -32,51 +37,52 @@ def IndividualProjectView(request,organization_id,category_id,project_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
     project = get_object_or_404(Projects,pk=project_id)
+    ancestorCategories = getCategoryAncestors(category_id)
     return render(request,'org_work/individualProject.html',{'organization': organization,'category':category,
                                                     'categories_list':Categories.objects.filter(organization=organization),
-                                                    'project':project
+                                                    'project':project, 'ancestor_categories_list': ancestorCategories
                                                     })
 
-def newCategoryView(request,organization_id,category_id=None,parent_id=None):
+def newProjectView(request,organization_id,category_id=None,parent_id=None):
     # one of the organizations the project belongs to (just need one bc of naviagtion and already on the org page)
     organization = get_object_or_404(Organizations,id=organization_id)
+    ancestorCategories = getCategoryAncestors(category_id)
 
     # one of the categories the project belongs to.
     category = None
     if category_id != None:
         category = get_object_or_404(Categories,pk=category_id)
 
-    # QUESTION: Do projects have more than 1 parent? I think not. Maybe implement it anyways or later.
-    # Organization is making a video game which is the project. The video game has a subproject for a specific
-    # level. There are two categories... developers and level designers. They both need to have access to that
-    # project and subproject so that they can work on it. But would the specific level need to have more than one
-    # parent project?
     parent = None
     if parent_id != None:
         parent = get_object_or_404(Projects,pk=parent_id)
 
-    form = NewProjectForm()
-    parentsList = [("None","None")]
-    for proj in Projects.objects.filter(organization=organization,category=category,parent=parent):
-        parentsList.append((proj.project_name,proj.project_name))
-    form.fields['parent_branch'].choices = parentsList
-    return render(request, 'org_home/newCategory.html',{'organization':organization,'form':form})
+    return render(request, 'org_work/newProject.html',{'organization':organization,'category':category,
+                                                       'categories_list': Categories.objects.filter(organization=organization),
+                                                        'ancestor_categories_list':ancestorCategories})
 
+@csrf_exempt
+def ProjectsInCommon(request):
+    selectedIds = json.loads(request.POST['selectedIds'])
+
+    commonProjects = []
+    # initially populate list with the projects that belong to the first category
+    category = get_object_or_404(Categories, pk=selectedIds[0])
+    for proj in category.relatedCategory.all():
+        commonProjects.append(proj)
+
+    # remove all projects from commonProjects that isn't in all of the categories
+    for catId in selectedIds:
+
+        category = get_object_or_404(Categories, pk=catId)
+
+        for proj in commonProjects:
+            if proj not in category.relatedCategory.all():
+                commonProjects.remove(proj)
+
+    return HttpResponse(commonProjects)
 
 # MUST REMOVE BELOW WHEN DONE
-# @login_required
-# def newCategoryView(request,organization_id,category_id=None):
-#     organization = get_object_or_404(Organizations,id=organization_id)
-#     if category_id != None:
-#         category = get_object_or_404(Categories,pk=category_id)
-#     else:
-#         category = None
-#     form = ParentCategories()
-#     parentsList = [("None","None")]
-#     for cat in Categories.objects.filter(organization=organization,parent=category):
-#         parentsList.append((cat.category_name,cat.category_name))
-#     return render(request, 'org_home/newCategory.html',{'organization':organization,'category':category,
-#                                                         'categories_list':Categories.objects.filter(organization=organization)})
 
 # # MUST REMOVE BELOW WHEN DONE (careful, parent is not longer charfield but foreignkey(self) )==
 # @login_required

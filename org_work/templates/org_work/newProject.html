@@ -2,20 +2,46 @@
 {% load static %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'org_home/new_category_style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'org_work/new_project_style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script>
-        function addExpandButton(id,name){
+        function permission()
+        {
+            if (document.getElementById('closed_category').checked)
+            {
+                document.getElementById("members_access").style.display = '';
+                document.getElementById("moderators_access").style.display = '';
+                document.getElementById("1").style.display = '';
+                document.getElementById("2").style.display = '';
+                document.getElementById("3").style.display = '';
+            }
+            else
+            {
+                document.getElementById("members_access").style.display = 'none';
+                document.getElementById("moderators_access").style.display = 'none';
+                document.getElementById("1").style.display = 'none';
+                document.getElementById("2").style.display = 'none';
+                document.getElementById("3").style.display = 'none';
+            }
+        }
+
+        function addExpandButton(id,name)
+        {
             subCategories = subCategoriesAndId(name);
-            if (subCategoriesAndId(name)[0].length != 0){
+            if (subCategoriesAndId(name)[0].length != 0)
+            {
                 document.getElementById(id).innerHTML += "<button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">v</button></div>";
             }
         }
-        function subCategoriesAndId(parent_name){
+
+        function subCategoriesAndId(parent_name)
+        {
             var subCategoryList = [];
             var subCategoryIdList = [];
             {% for category in categories_list %}
-                if ("{{ category.parent }}" == parent_name){
+                if ("{{ category.parent }}" == parent_name)
+                {
                     var c = "{{ category.category_name }}";
                     var id = "{{ category.id }}";
                     subCategoryList.push(c);
@@ -24,42 +50,151 @@
             {% endfor %}
             return [subCategoryList,subCategoryIdList]
         }
-        <!--Will expand to show the list of subcategories-->
-        function expand(divName,parent_name){
-            subCategories = subCategoriesAndId(parent_name);
+
+        // returns true if user is in category
+        function userInCategory(category_id)
+        {
+            var resp = 0;
+            $.ajax(
+            {
+                'async': false,
+                'type': "POST",
+                'global': false,
+                'dataType': 'html',
+                'url': "{% url 'org_home:userInCategory' %}",
+                'data': {category_id:category_id},
+                'success': function (data) {
+                    resp = data;
+                }
+            });
+            return parseInt(resp) === 1;
+        }
+
+
+        // Will expand to show the list of subcategories
+        // if hasAccess is true, then all children of this category can be selected
+        function expand(category_id,category,hasAccess)
+        {
+            if (hasAccess === undefined)
+                hasAccess = false;
+
+            subCategories = subCategoriesAndId(category);
             var subCategoryList = subCategories[0];
             var subCategoryIdList = subCategories[1];
-            var newdiv = document.createElement('div');
-            newdiv.id = "close" + divName;
-            var checkOnPage =  document.getElementById(newdiv.id);
-            if (checkOnPage == null){
-                for (c in subCategoryList){
-                    id = subCategoryIdList[c];
-                    name = subCategoryList[c];
-                    url = "{% url 'org_home:individualCategory' organization_id=organization.id category_id=123 %}".replace("123", subCategoryIdList[c]);
-                    if (subCategoriesAndId(name)[0].length != 0){
-                        newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                        <input type='radio' id='choice" + id + "' name='parent' value='" + id + "'/>\
-                        <label>      " + name + "</label>\
-                        <button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">v</button></div>";
-                    }
-                    else{
-                        newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                        <input type='radio' id='choice" + id + "' name='parent' value='" + id + "'/>\
-                        <label>      " + name + "</label";
-                    }
 
+            var newdiv = document.createElement('div');
+            newdiv.id = "close" + category_id;
+
+            var checkOnPage =  document.getElementById(newdiv.id);
+            if (checkOnPage == null)
+            {
+                for (c in subCategoryList)
+                {
+                    var id = subCategoryIdList[c];
+                    var name = subCategoryList[c];
+                    var url = "{% url 'org_home:individualCategory' organization_id=organization.id category_id=123 %}".replace("123", subCategoryIdList[c]);
+
+                    // if the category has subcategories
+                    if (subCategoriesAndId(name)[0].length != 0)
+                    {
+                        // user has permision to select category as parent. By being in category or by hasAccess
+                        if(hasAccess || userInCategory(id))
+                        {
+                            newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                            <input onclick='changeSharedProjectsHTML()' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
+                            <label>" + name + "</label>\
+                            <button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "',true)\">v</button></div>";
+                        }
+                        else
+                        {
+                            newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                            <label style=\"padding-left: 22px\" id=\"notInCat\">" + name + "</label>\
+                            <button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "',false)\">v</button></div>";
+                        }
+                    }
+                    // if the category doesn't have subcategories... so missing expand button
+                    else
+                    {
+                        if(hasAccess || userInCategory(id))
+                        {
+                            newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                            <input onclick='changeSharedProjectsHTML()' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
+                            <label>" + name + "</label></div>";
+                        }
+                        else
+                        {
+                            newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
+                            <label style=\"padding-left: 22px\" id=\"notInCat\">" + name + "</label></div>";
+                        }
+                    }
                 }
-                document.getElementById(divName).innerHTML += "<input id='closeButton" + divName + "' type=button value='^' onclick=\"contract('" + divName + "')\"/>";
-                document.getElementById(divName).appendChild(newdiv);
-                document.getElementById("exp" + divName).style.display='none';
-                }
+
+                // add button that contracts the subcategories
+                document.getElementById(category_id).innerHTML += "<input id='closeButton" + category_id + "' type=button value='^' onclick=\"contract('" + category_id + "')\"/>";
+                document.getElementById(category_id).appendChild(newdiv);
+
+                // hide the expand button
+                document.getElementById("exp" + category_id).style.display='none';
             }
+        }
+
         function contract(divName){
             document.getElementById("close" + divName).remove();
             document.getElementById("closeButton" + divName).remove();
             document.getElementById("exp" + divName).style.display = '';
             }
+
+        function selectCategory(categoryId){
+            id = "choice" + categoryId;
+            document.getElementById(id).setAttribute('checked','');
+        }
+
+        // get all selected categories
+        function getSelectedCategories()
+        {
+            var checkedBoxes = document.querySelectorAll('input[name=categoryCheckbox]:checked');
+            var numbChecked = checkedBoxes.length;
+            var selectedIds = [];
+
+            for(var i = 0; i < numbChecked; i++)
+                selectedIds.push(checkedBoxes[i].value);
+
+            return selectedIds;
+        }
+
+        function getSharedProjects()
+        {
+            var selectedIds = getSelectedCategories();
+            var commonProjects = [];
+            if(selectedIds.length > 0)
+            {
+                $.ajax(
+                {
+                    'type': "POST",
+                    'data': {'selectedIds':JSON.stringify(selectedIds)},
+                    'url': "{% url 'org_work:ProjectsInCommon' %}",
+                    'success': function (data)
+                    {
+                        window.alert(typeof(data));
+                        commonProjects = data;
+                    }
+                });
+            }
+            return commonProjects;
+        }
+
+        function changeSharedProjectsHTML()
+        {
+            var commonProjects = getSharedProjects();
+            window.alert(commonProjects);
+            for(var i in commonProjects)
+            {
+                document.getElementById("parentProject").innerHTML += "<input type='radio' " +
+                    "id='parentChoice-" + commonProjects[i].id + "' name='parent' value='" + commonProjects[i].id +
+                    "'/><label>" + commonProjects[i].project_name + "</label>";
+            }
+        }
+
     </script>
 
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -70,24 +205,54 @@
     <form action="{% url 'org_home:submitNewSubCategory' organization.id category.id %}" method="post">
     {% endif %}
     {% csrf_token %}
-        <div id="parentSelect">
-            <h2>Choose a Parent</h2>
-            <input type="radio" name="parent" id="choice-1" value="-1"/><label>      No Parent</label>
+        <div id="categorySelect">
+            <h3>Choose Branches</h3>
+            <!--<input onclick='getSharedProjects()' type="checkbox" name="categoryCheckbox" id="categoryChoice-1" value="-1"/><label>No Parent</label>-->
             {% if categories_list %}
                 {% for category in categories_list %}
+
+                    <!-- Doens't have a parent... "Executive" -->
                     {% if category.parent == None %}
                         <div id= {{ category.id }}>
-                            <input type="radio" id="choice{{ category.id }}" name="parent" value="{{ category.id }}"/><label>      {{ category }}</label>
-                            <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
+                            <!-- User not in category -->
+                            {% if user not in category.members.all %}
+                                <label style="padding-left: 22px" id="notInCat">{{ category }}</label>
+                                <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
+                                <script >expand('{{ category.id }}', '{{ category }}', false);</script>
+                            {% else %}
+                                <input type="checkbox" id="choice{{ category.id }}" name="categoryCheckbox" value="{{ category.id }}"/>
+                                <label>{{ category }}</label>
+                                <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
+                                <script >expand('{{ category.id }}', '{{ category }}', true);</script>
+                            {% endif %}
+
                         </div>
                     {% endif %}
                 {% endfor %}
+
+            <!-- Expand till get to current page category -->
+                {% for ancestor in ancestor_categories_list %}
+                    <!-- Don't need addExpandButton here because it is automatically added when executive calls it and expand
+                     adds it automatically. (No expand called on executive because it is the base so need to manually add it there) -->
+                    <script>expand('{{ ancestor.id }}', '{{ ancestor }}',userInCategory( {{ ancestor.pk }} ));</script>
+                {% endfor %}
+
+                <script>selectCategory('{{ category.id }}')</script>
+                <script>changeSharedProjectsHTML()</script>
+
             {% else %}
                 <p>No categories are available.</p>
             {% endif %}
         </div>
-        <main>
-            <h1>Details</h1>
+
+        <div id="parentProject">
+            <h3>Choose a parent project</h3>
+            <h6 style="text-align: center">Selected branches' shared projects</h6>
+            <input type="radio" name="parent" id="parentChoice-1" value="-1"/><label>      No Parent</label>
+        </div>
+
+        <div id="details">
+            <h3>Details</h3>
             <div style="padding-left:10px;" id="forms">
                 <label>Name: </label>
                 <input type="text" name="new_category" id="new_category"/><br/><br/>
@@ -100,27 +265,7 @@
                 <input type="radio" name="access" id="moderators_access" value="moderators" style="display:none"/><br/><br/>
             </div>
             <input style="float:right;" type="submit" value="Submit"/>
-        </main>
+        </div>
     </form>
-
-<script>
-function permission(){
-
-    if (document.getElementById('closed_category').checked){
-        document.getElementById("members_access").style.display = '';
-        document.getElementById("moderators_access").style.display = '';
-        document.getElementById("1").style.display = '';
-        document.getElementById("2").style.display = '';
-        document.getElementById("3").style.display = '';
-        }
-    else{
-        document.getElementById("members_access").style.display = 'none';
-        document.getElementById("moderators_access").style.display = 'none';
-        document.getElementById("1").style.display = 'none';
-        document.getElementById("2").style.display = 'none';
-        document.getElementById("3").style.display = 'none';
-        }
-    }
-</script>
 
 {% endblock %}
