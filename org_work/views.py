@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
-from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect,HttpResponse
-from django.urls import reverse
-from django.views import generic, View
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 from django.shortcuts import render
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers
 import json
 
 from org_home.models import Categories
 from home.models import Organizations
 from .models import Projects
-from .forms import NewProjectForm
 from org_home.views import getCategoryAncestors
 
 @login_required
@@ -80,7 +75,9 @@ def ProjectsInCommon(request):
             if proj not in category.relatedCategory.all():
                 commonProjects.remove(proj)
 
-    return HttpResponse(commonProjects)
+    print(commonProjects)
+    data = serializers.serialize('json', commonProjects)
+    return HttpResponse(json.dumps(data), content_type='application/json')
 
 # MUST REMOVE BELOW WHEN DONE
 

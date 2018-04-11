@@ -162,10 +162,10 @@
             return selectedIds;
         }
 
-        function getSharedProjects()
+        function getSharedProjects(commonProjects)
         {
             var selectedIds = getSelectedCategories();
-            var commonProjects = [];
+            var commonProjectsJson;
             if(selectedIds.length > 0)
             {
                 $.ajax(
@@ -175,24 +175,28 @@
                     'url': "{% url 'org_work:ProjectsInCommon' %}",
                     'success': function (data)
                     {
-                        window.alert(typeof(data));
-                        commonProjects = data;
+                        commonProjectsJson = JSON.parse(data);
+                        commonProjects(commonProjectsJson)
+                        // id is commonProjectsJson[0].pk
+                        // name is commonProjectsJson[0].fields.project_name
                     }
                 });
             }
-            return commonProjects;
         }
 
         function changeSharedProjectsHTML()
         {
-            var commonProjects = getSharedProjects();
-            window.alert(commonProjects);
-            for(var i in commonProjects)
+            $("[id^='parentChoice_']").remove();
+            // callback function
+            getSharedProjects(function(commonProjects)
             {
-                document.getElementById("parentProject").innerHTML += "<input type='radio' " +
-                    "id='parentChoice-" + commonProjects[i].id + "' name='parent' value='" + commonProjects[i].id +
-                    "'/><label>" + commonProjects[i].project_name + "</label>";
-            }
+                for(var i in commonProjects)
+                {
+                    document.getElementById("parentProject").innerHTML += "<div id='parentChoice_\" + commonProjects[i].pk + \"'>" +
+                        "<input type='radio'  name='parent' value='" + commonProjects[i].pk +
+                        "'/><label>" + commonProjects[i].fields.project_name + "</label></div>";
+                }
+            });
         }
 
     </script>
@@ -220,7 +224,7 @@
                                 <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
                                 <script >expand('{{ category.id }}', '{{ category }}', false);</script>
                             {% else %}
-                                <input type="checkbox" id="choice{{ category.id }}" name="categoryCheckbox" value="{{ category.id }}"/>
+                                <input onclick='changeSharedProjectsHTML()' type="checkbox" id="choice{{ category.id }}" name="categoryCheckbox" value="{{ category.id }}"/>
                                 <label>{{ category }}</label>
                                 <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
                                 <script >expand('{{ category.id }}', '{{ category }}', true);</script>
@@ -248,7 +252,7 @@
         <div id="parentProject">
             <h3>Choose a parent project</h3>
             <h6 style="text-align: center">Selected branches' shared projects</h6>
-            <input type="radio" name="parent" id="parentChoice-1" value="-1"/><label>      No Parent</label>
+            <input type="radio" name="parent" id="noParent" value="-1"/><label>      No Parent</label>
         </div>
 
         <div id="details">
