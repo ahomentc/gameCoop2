@@ -1,0 +1,43 @@
+<a href = "{% url 'org_home:index' organization.id %}">Home</a><br/>
+
+<h2 style="margin-left: 20%;">{{ title }}</h2>
+{% if main_id != null %}
+    <a style="margin-left: 20%;" href="{% url 'consensusEditing:viewProposals' main_id organization.id %}">Proposed Edits</a>
+    main_id: {{ main_id }}
+{% else %}
+    <a style="margin-left: 20%;" href="{% url 'consensusEditing:viewProposals' textdoc_id organization.id %}">Proposed Edits</a>
+    textdoc: {{ textdoc_id }}
+{% endif %}
+<form style="margin-left:20%;" action="{% url 'consensusEditing:editTextDoc' textdoc_id organization.id %}" method="post">
+    {% csrf_token %}
+    <div id="editAndSubmit">
+
+        <input type="submit" value="Submit"/>
+        <input type="button"  id="editButton" value="Edit" onclick="enableEdit()"/>
+
+    </div>
+
+    <textarea readonly style="width:800px; height:600px; outline:none; color:slategrey; margin-top: 10px; border-color:lightgrey" id="contentEditor" name="content">{{ text }}</textarea><br/>
+
+</form>
+
+<script>
+    function enableEdit(){
+        document.getElementById("contentEditor").removeAttribute('readonly','false');
+        document.getElementById("contentEditor").style.color = 'black';
+        document.getElementById("contentEditor").style.borderColor = 'grey';
+
+        document.getElementById("editButton").remove();
+        document.getElementById("editAndSubmit").innerHTML += "<input id='doneButton' type='button' value='Done' onclick='endEdit()'/>"
+    }
+
+    function endEdit(){
+        document.getElementById("contentEditor").setAttribute('readonly','true');
+        document.getElementById("contentEditor").style.color = 'slategrey';
+        document.getElementById("contentEditor").style.borderColor = 'lightgrey';
+
+        document.getElementById("doneButton").remove();
+        document.getElementById("editAndSubmit").innerHTML += "<input id='editButton' type='button' value='Edit' onclick='enableEdit()'/>"
+    }
+
+</script>

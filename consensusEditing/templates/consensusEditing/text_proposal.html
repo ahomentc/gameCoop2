@@ -1,13 +1,18 @@
 <a href = "{% url 'org_home:index' organization.id %}">Home</a><br/>
 
-<h2 style="margin-left: 20%;">Monetary Distribution</h2>
-<a style="margin-left: 20%;" href="">Proposed Edits</a>
-<form style="margin-left:20%;" action="{% url 'org_struct:community_editing' organization.id %}" method="post">
+<div style="margin-left: 20%;">
+    <h2>{{ title }} Proposal</h2>
+    <button>yay</button>
+    <button>nay</button>
+    <p> Maybe have a discussion thing here on the side</p>
+</div>
+<form style="margin-left:20%;" action="{% url 'consensusEditing:editTextDoc' textdoc_id organization.id %}" method="post">
     {% csrf_token %}
     <div id="editAndSubmit">
 
         <input type="submit" value="Submit"/>
-        <button id="editButton" onclick="enableEdit()">Edit</button>
+        <input type="button"  id="editButton" value="Edit" onclick="enableEdit()"/>
+
     </div>
 
     <textarea readonly style="width:800px; height:600px; outline:none; color:slategrey; margin-top: 10px; border-color:lightgrey" id="contentEditor" name="content">{{ text }}</textarea><br/>
@@ -16,22 +21,21 @@
 
 <script>
     function enableEdit(){
-        document.getElementById("contentEditor").removeAttribute('readonly');
+        document.getElementById("contentEditor").removeAttribute('readonly','false');
         document.getElementById("contentEditor").style.color = 'black';
         document.getElementById("contentEditor").style.borderColor = 'grey';
 
         document.getElementById("editButton").remove();
-        document.getElementById("editAndSubmit").innerHTML += "<button id='doneButton' onclick='endEdit()'>Done</button>"
+        document.getElementById("editAndSubmit").innerHTML += "<input id='doneButton' type='button' value='Done' onclick='endEdit()'/>"
     }
 
     function endEdit(){
-        document.getElementById("contentEditor").setAttribute('readonly');
+        document.getElementById("contentEditor").setAttribute('readonly','true');
         document.getElementById("contentEditor").style.color = 'slategrey';
         document.getElementById("contentEditor").style.borderColor = 'lightgrey';
 
         document.getElementById("doneButton").remove();
-        document.getElementById("editAndSubmit").innerHTML += "<button id='editButton' onclick='enableEdit()'>Edit</button>"
+        document.getElementById("editAndSubmit").innerHTML += "<input id='editButton' type='button' value='Edit' onclick='enableEdit()'/>"
     }
 
 </script>
-

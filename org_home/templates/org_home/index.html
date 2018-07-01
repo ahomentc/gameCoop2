@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content2 %}
-{% with organization=organization categories_list=categories_list %}
+{% with organization=organization categories_list=categories_list projects_list=projects_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
     {% if user in organization.members.all %}
@@ -25,7 +25,11 @@
             {% endif %}
             <p>------------------------</p>
             {% endif %}
-            <a href = "{% url 'org_struct:index' organization.id %}">Organizational Structure</a><br/>
+            <!--<a href = "{% url 'org_struct:index' organization.id %}">Organizational Structure</a><br/>-->
+            <a href = "{% url 'org_struct:index' organization.id %}">Constitution</a><br/>
+            <br/>
+            <a href="">Contribution Percentages</a>
+            <p>Andrei - 100%</p>
         </main>
     {% elif user in organization.pending_members.all %}
         <p>Pending membership</p>
@@ -34,6 +38,13 @@
         <a style="text-decoration:none;" href="{% url 'org_home:joinOrganization' organization.id %}">Join</a><br/>
         <a style="text-decoration:none;" href="">Info</a><br/>
     {% endif %}
+
+    <div id="feed">
+    <h2>Activity Feed</h2>
+        <p>Check the "in review" thing in gits. Then post them here</p>
+        <a href="">Jared changed the logo</a> <a href="">Yay</a> <a href="">Nay</a> <a href="">Discuss</a>
+    </div>
+
 
 {% endwith %}
 {% endblock %}

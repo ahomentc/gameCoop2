@@ -1,16 +1,54 @@
+{% extends "org_home/base.html" %}
 {% load static %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list projects_list=projects_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-<article>
-    {% include "org_home/base.html" with organization=organization category=category categories_list=categories_list %}
-
-    {% block content %}
     <main>
-        <p1> Project name: {{ project.project_name }}</p1>
+        <h3 style="text-align:center">{{ project.project_name }}</h3>
+        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1zgGOkRZArM1KEnqPWUmfW-rmYk6J3nKTJ28o1SXKGf0/edit?usp=sharing">Tasks</a>
+        <p>
+            The thing is that service needs to keep track of what people do so that we can compensate.
+            So either do own project management or have one that has an api that allows you to access
+            what people do.
+        </p>
+
+        <!-- Connect account to github. Ask user to log into github. Then that github username or ID is
+             linked to the groupRoots account. So we can now track contributions -->
+        <a title="GitHub" class="socialaccount_provider github" href="/accounts/github/login/?process=login">Connect account to GitHub</a><br/>
+
+        <!-- else -->
+        <!--<a href="{% url 'org_work:CreateGitRepo' organization.id project.id %}">Integrate Git (Not Now)</a><br/>-->
+        <a href="{% url 'org_work:ConnectGitHub' organization.id project.id %}">Integrate GitHub</a><br/>
+        <a href="">Connect existing GitHub repository</a><br/>
+
+
+        <a onclick="openGITURL()">Go to Repository</a>
+
+        <script>
+            function openGITURL()
+            {
+                var URL;
+                $.ajax(
+                {
+                    'async': false,
+                    'url': "{% url 'org_work:getGitURL' organization.id organization.organization_name project.id project.project_name %}",
+                    'success': function (data) {
+                        URL = data;
+                    }
+                });
+                window.open(URL);
+
+            }
+        </script>
+
+
     </main>
 
-    {% include "org_work/projectsSidebar.html" with category=category %}
-
-    {% endblock %}
-
-</article>
+{% endwith %}
+{% endblock %}

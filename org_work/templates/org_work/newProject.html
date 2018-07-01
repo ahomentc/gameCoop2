@@ -6,25 +6,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script>
-        function permission()
-        {
-            if (document.getElementById('closed_category').checked)
-            {
-                document.getElementById("members_access").style.display = '';
-                document.getElementById("moderators_access").style.display = '';
-                document.getElementById("1").style.display = '';
-                document.getElementById("2").style.display = '';
-                document.getElementById("3").style.display = '';
-            }
-            else
-            {
-                document.getElementById("members_access").style.display = 'none';
-                document.getElementById("moderators_access").style.display = 'none';
-                document.getElementById("1").style.display = 'none';
-                document.getElementById("2").style.display = 'none';
-                document.getElementById("3").style.display = 'none';
-            }
-        }
+
+        var expandCounter = 0;
 
         function addExpandButton(id,name)
         {
@@ -51,7 +34,12 @@
             return [subCategoryList,subCategoryIdList]
         }
 
+
         // returns true if user is in category
+
+        // MAKE THIS ASYNCHRONOUS
+        // https://codeburst.io/asynchronous-code-inside-an-array-loop-c5d704006c99
+        // http://callbackhell.com/
         function userInCategory(category_id)
         {
             var resp = 0;
@@ -70,7 +58,6 @@
             return parseInt(resp) === 1;
         }
 
-
         // Will expand to show the list of subcategories
         // if hasAccess is true, then all children of this category can be selected
         function expand(category_id,category,hasAccess)
@@ -88,6 +75,7 @@
             var checkOnPage =  document.getElementById(newdiv.id);
             if (checkOnPage == null)
             {
+                expandCounter++;
                 for (c in subCategoryList)
                 {
                     var id = subCategoryIdList[c];
@@ -101,7 +89,7 @@
                         if(hasAccess || userInCategory(id))
                         {
                             newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                            <input onclick='changeSharedProjectsHTML()' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
+                            <input onclick='changeSharedProjectsHTML()' title='" + expandCounter + "' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
                             <label>" + name + "</label>\
                             <button id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "',true)\">v</button></div>";
                         }
@@ -118,7 +106,7 @@
                         if(hasAccess || userInCategory(id))
                         {
                             newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                            <input onclick='changeSharedProjectsHTML()' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
+                            <input onclick='changeSharedProjectsHTML()' title='" + expandCounter + "' type='checkbox' id='choice" + id + "' name='categoryCheckbox' value='" + id + "'/>\
                             <label>" + name + "</label></div>";
                         }
                         else
@@ -155,23 +143,31 @@
             var checkedBoxes = document.querySelectorAll('input[name=categoryCheckbox]:checked');
             var numbChecked = checkedBoxes.length;
             var selectedIds = [];
+            var selectedTreePostions = [];
 
             for(var i = 0; i < numbChecked; i++)
-                selectedIds.push(checkedBoxes[i].value);
+            {
+                var obj = checkedBoxes[i];
+                selectedIds.push(obj.value);
+                selectedTreePostions.push(obj.title);
+            }
 
-            return selectedIds;
+            return [selectedIds,selectedTreePostions];
         }
 
         function getSharedProjects(commonProjects)
         {
-            var selectedIds = getSelectedCategories();
+            var selectedIds = getSelectedCategories()[0];
+            var selectedTreePositions = getSelectedCategories()[1];
             var commonProjectsJson;
             if(selectedIds.length > 0)
             {
                 $.ajax(
                 {
                     'type': "POST",
-                    'data': {'selectedIds':JSON.stringify(selectedIds)},
+                    'data': {'selectedIds':JSON.stringify(selectedIds),
+                            'selectedTreePositions':JSON.stringify(selectedTreePositions),
+                            'maxTreePositions':expandCounter},
                     'url': "{% url 'org_work:ProjectsInCommon' %}",
                     'success': function (data)
                     {
@@ -204,13 +200,13 @@
     {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
     {% if category == None %}
-    <form action="{% url 'org_home:submitNewCategory' organization.id %}" method="post">
+    <form action="{% url 'org_work:submitNewProject' organization.id %}" method="post">
     {% else %}
-    <form action="{% url 'org_home:submitNewSubCategory' organization.id category.id %}" method="post">
+    <form action="{% url 'org_work:submitNewSubProject' organization.id category.id %}" method="post">
     {% endif %}
     {% csrf_token %}
         <div id="categorySelect">
-            <h3>Choose Branches</h3>
+            <h3>1. Choose Branches</h3>
             <!--<input onclick='getSharedProjects()' type="checkbox" name="categoryCheckbox" id="categoryChoice-1" value="-1"/><label>No Parent</label>-->
             {% if categories_list %}
                 {% for category in categories_list %}
@@ -224,7 +220,7 @@
                                 <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
                                 <script >expand('{{ category.id }}', '{{ category }}', false);</script>
                             {% else %}
-                                <input onclick='changeSharedProjectsHTML()' type="checkbox" id="choice{{ category.id }}" name="categoryCheckbox" value="{{ category.id }}"/>
+                                <input onclick='changeSharedProjectsHTML()' title='0' type="checkbox" id="choice{{ category.id }}" name="categoryCheckbox" value="{{ category.id }}"/>
                                 <label>{{ category }}</label>
                                 <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
                                 <script >expand('{{ category.id }}', '{{ category }}', true);</script>
@@ -250,23 +246,21 @@
         </div>
 
         <div id="parentProject">
-            <h3>Choose a parent project</h3>
+            <h3>2. Choose a parent project</h3>
             <h6 style="text-align: center">Selected branches' shared projects</h6>
             <input type="radio" name="parent" id="noParent" value="-1"/><label>      No Parent</label>
         </div>
 
+        <div id="projectManagement">
+            <h3>3. Choose a project management system</h3>
+            <p>Default selected</p>
+        </div>
+
         <div id="details">
-            <h3>Details</h3>
+            <h3>4. Details</h3>
             <div style="padding-left:10px;" id="forms">
                 <label>Name: </label>
-                <input type="text" name="new_category" id="new_category"/><br/><br/>
-                <br/><br/><label>Need permission to join? </label>
-                <input type="checkbox" onclick="permission()" name="closed_category" id="closed_category"/><br/><br/>
-                <label id="1" style="display:none">Who can grant permission? </label><br/>
-                <label id="2" style="display:none">All Members</label>
-                <input type="radio" name="access" id="members_access" value="all_members" style="display:none"/><br/>
-                <label id="3" style="display:none">Moderator</label>
-                <input type="radio" name="access" id="moderators_access" value="moderators" style="display:none"/><br/><br/>
+                <input type="text" name="new_project" id="new_project"/><br/><br/>
             </div>
             <input style="float:right;" type="submit" value="Submit"/>
         </div>

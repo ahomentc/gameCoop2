@@ -1,0 +1,7 @@
+<h1>list of proposals:</h1>
+
+<ul style="list-style: none;">
+    {% for proposal in proposals_list %}
+        <li> <a href="{% url 'consensusEditing:viewTextProposal' proposal.id organization.id %}"> {{ proposal.poster }}'s change </a> </li>
+    {% endfor %}
+</ul>

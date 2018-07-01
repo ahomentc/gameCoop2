@@ -11,7 +11,7 @@ from home.models import Organizations
 class Projects(models.Model):
     organization = models.ForeignKey(Organizations, on_delete=models.CASCADE, blank=True, null=True)
     category = models.ManyToManyField(Categories, blank=True, null=True, related_name='relatedCategory')
-    parent = models.ForeignKey("self", blank=True, null=True)
+    parent = models.ForeignKey("self", blank=True, null=True, related_name='relatedParent')
     description = models.TextField(blank=True,null=True)
     project_name = models.CharField(max_length=100)
 

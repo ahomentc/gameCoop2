@@ -41,11 +41,27 @@ form{
     padding: 5px 10px;
 }
 
-#details {
+#projectManagement {
+    height: 280px;
     grid-column: 3;
     grid-row:1/2;
+    background-color: white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    margin-left:0;
+    width: 200px;
+    padding: 5px 10px;
+}
+
+#details {
+    grid-column: 1;
+    grid-row:2/2;
     height: 280px;
-    margin: 0 0 0 0;
+    margin: 40 0 0 0;
     padding: 10 10 0 10;
     align-self: start;
     width: 200px;
@@ -55,6 +71,8 @@ form{
     border-width: thin;
     border-radius: 8px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+    overflow-y: scroll;
+    overflow-x: scroll;
 }
 
 #notInCat{

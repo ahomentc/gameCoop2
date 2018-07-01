@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect,HttpResponse
 from django.urls import reverse
@@ -12,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Categories
+from org_work.models import Projects
 from home.models import Organizations
 from .forms import ParentCategories
 
@@ -35,12 +34,14 @@ def userInCategory(request):
 @login_required
 def IndexView(request,organization_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
-    return render(request, 'org_home/index.html',{'organization': organization,'member_categories_list': Categories.objects.filter(
-        members__id=request.user.id,organization=organization),
-        'categories_list':Categories.objects.filter(organization=organization)
-    })
+    return render(request, 'org_home/index.html',
+                  { 'organization': organization,
+                    'member_categories_list': Categories.objects.filter(members__id=request.user.id,organization=organization),
+                    'categories_list':Categories.objects.filter(organization=organization),
+                    'projects_list': Projects.objects.filter(organization=organization),
+                  })
 
-# list of all the categories/root/branch in a coop
+# list of all the categories/root/branch in a coop DELETE THIS I THINK
 @login_required
 def CategoryView(request,organization_id):
     organization = get_object_or_404(Organizations,id=organization_id)
@@ -53,11 +54,14 @@ def IndividualCategoryView(request,organization_id,category_id):
     category = get_object_or_404(Categories,pk=category_id)
     subCategories = Categories.objects.filter(parent=category)
     ancestorCategories = getCategoryAncestors(category_id)
+    projects_list = Projects.objects.filter(organization=organization,category=category)
     return render(request,'org_home/individualCategory.html',{'organization':organization,
                                                             'category': category,
                                                             'subCategories':subCategories,
                                                             'categories_list':Categories.objects.filter(organization=organization,),
-                                                            'ancestor_categories_list':ancestorCategories})
+                                                            'ancestor_categories_list':ancestorCategories,
+                                                            'projects_list':projects_list
+                                                            })
 
 # page to create a new category/root/branch
 @login_required

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from . import private_settings
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,11 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-try: from private_settings import getSecretKey
-except ImportError:
-    print("Error: make a local version of private_settings.py from the template")
-
-SECRET_KEY = getSecretKey
+SECRET_KEY = private_settings.getSecretKey()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -74,6 +71,7 @@ INSTALLED_APPS = [
 
     'vote.apps.VoteConfig',
     'home.apps.HomeConfig',
+    'consensusEditing.apps.ConsensuseditingConfig',
     'org_home.apps.OrgHomeConfig',
     'user_profiles.apps.UserProfilesConfig', #****
     'org_struct.apps.OrgStructConfig',
