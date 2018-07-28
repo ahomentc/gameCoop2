@@ -2,30 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9ce08e88-6b8e-447c-9f78-c4ca2f898735" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/activity_feed/templates/activity_feed/viewFeed.html" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/activity_feed/urls.py" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/org_home/templates/org_home/individualPosition.html" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/org_home/templates/org_home/newPosition.html" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/org_home/templates/org_home/positions.html" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/vote/templates/vote/individualDecision.html" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/proposals.html" afterPath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/proposals.html" />
-      <change beforePath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/text_doc.html" afterPath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/text_doc.html" />
-      <change beforePath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/text_proposal.html" afterPath="$PROJECT_DIR$/consensusEditing/templates/consensusEditing/text_proposal.html" />
-      <change beforePath="$PROJECT_DIR$/consensusEditing/urls.py" afterPath="$PROJECT_DIR$/consensusEditing/urls.py" />
-      <change beforePath="$PROJECT_DIR$/gameCoop/settings.py" afterPath="$PROJECT_DIR$/gameCoop/settings.py" />
-      <change beforePath="$PROJECT_DIR$/gameCoop/urls.py" afterPath="$PROJECT_DIR$/gameCoop/urls.py" />
-      <change beforePath="$PROJECT_DIR$/home/static/home/style.css" afterPath="$PROJECT_DIR$/home/static/home/style.css" />
-      <change beforePath="$PROJECT_DIR$/home/views.py" afterPath="$PROJECT_DIR$/home/views.py" />
-      <change beforePath="$PROJECT_DIR$/org_home/admin.py" afterPath="$PROJECT_DIR$/org_home/admin.py" />
-      <change beforePath="$PROJECT_DIR$/org_home/models.py" afterPath="$PROJECT_DIR$/org_home/models.py" />
-      <change beforePath="$PROJECT_DIR$/org_home/static/org_home/style.css" afterPath="$PROJECT_DIR$/org_home/static/org_home/style.css" />
-      <change beforePath="$PROJECT_DIR$/org_home/templates/org_home/individualCategory.html" afterPath="$PROJECT_DIR$/org_home/templates/org_home/individualCategory.html" />
-      <change beforePath="$PROJECT_DIR$/org_home/templates/org_home/members.html" afterPath="$PROJECT_DIR$/org_home/templates/org_home/members.html" />
-      <change beforePath="$PROJECT_DIR$/org_home/urls.py" afterPath="$PROJECT_DIR$/org_home/urls.py" />
-      <change beforePath="$PROJECT_DIR$/org_home/views.py" afterPath="$PROJECT_DIR$/org_home/views.py" />
-      <change beforePath="$PROJECT_DIR$/org_struct/templates/org_struct/index.html" afterPath="$PROJECT_DIR$/org_struct/templates/org_struct/index.html" />
-      <change beforePath="$PROJECT_DIR$/org_struct/views.py" afterPath="$PROJECT_DIR$/org_struct/views.py" />
     </list>
     <ignored path="settings.py" />
     <ignored path="storage/organizations/47/mains/git/65.txt" />
@@ -386,7 +363,14 @@
       <option name="project" value="LOCAL" />
       <updated>1530480808064</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="New version of GameCoop">
+      <created>1532817331137</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1532817331138</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -604,6 +588,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="11" column="41" lean-forward="false" selection-start-line="11" selection-start-column="41" selection-end-line="11" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
