@@ -1,7 +1,19 @@
-<h1>list of proposals:</h1>
+{% extends "org_home/base.html"  %}
+{% load static %}
 
-<ul style="list-style: none;">
-    {% for proposal in proposals_list %}
-        <li> <a href="{% url 'consensusEditing:viewTextProposal' proposal.id organization.id %}"> {{ proposal.poster }}'s change </a> </li>
-    {% endfor %}
-</ul>
+{% block content2 %}
+{% with organization=organization categories_list=categories_list projects_list=projects_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<main>
+    <h1>list of proposals:</h1>
+
+    <ul style="list-style: none;">
+        {% for proposal in proposals_list %}
+            <li> <a href="{% url 'consensusEditing:viewTextProposal' proposal.id organization.id %}"> {{ proposal.poster }}'s change </a> </li>
+        {% endfor %}
+    </ul>
+</main>
+
+{% endwith %}
+{% endblock %}

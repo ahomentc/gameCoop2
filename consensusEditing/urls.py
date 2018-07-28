@@ -15,4 +15,7 @@ urlpatterns = [
 
     # view specific proposal
     url(r'^(?P<text_proposal_id>\d+)/(?P<organization_id>\d+)/viewTextProposal', views.viewTextProposal,name='viewTextProposal'),
+
+    # vote
+    url(r'^proposalVote',views.proposalVote,name='proposalVote'),
 ]

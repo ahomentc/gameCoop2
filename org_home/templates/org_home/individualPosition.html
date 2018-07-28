@@ -1,0 +1,83 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <main>
+        <h1> {{ position.position_name }} </h1>
+        <p>Description: {{ position.description }}</p>
+        <div style="border-style: solid; border-width:thin; border-color: #d6d6d8; padding:10px; margin-top: 10px; margin-bottom: 10px;">
+            <label>Position holders:</label>
+            <ul id="membersInPosition">
+            {% for user in users.all %}
+                <li>{{ user }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+
+        </br>
+
+        {% if position.position_requesters.all %}
+            {% if user in position.position_holders.all %}
+                <div style="border-style: solid; border-width:thin; border-color: #d6d6d8; padding:10px; margin-top: 10px; margin-bottom: 10px;">
+                    <label>Position requesters:</label>
+                    <ul>
+                        {% for pending_member in position.position_requesters.all %}
+                            <li id="{{pending_member.id}}_request">{{ pending_member }} <a style="cursor:pointer;color:#2200CC;" onclick="grantAccess('{{ pending_member.pk }}', '{{ pending_member }}')">Grant Access</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endif %}
+
+
+        {% if user not in position.position_holders.all %}
+            {% if user not in position.position_requesters.all %}
+                <a id="request" style="cursor:pointer;color:#2200CC;" onclick="joinRequest()">Request to Join</a>
+                <label id="requestSent" hidden>Position Requested</label><br/>
+            {% else %}
+                <label>Position Requested</label><br/>
+            {% endif %}
+        {% endif %}
+
+        <script>
+           function joinRequest()
+           {
+                $.ajax(
+                {
+                    'type': "POST",
+                    'dataType': 'html',
+                    'url': "{% url 'org_home:requestToJoinPos' %}",
+                    'data': {position_id: {{ position.id}} },
+                    'success': function(data) {
+                        $('#request').remove();
+                        $('#requestSent').show();
+                    }
+                });
+           }
+
+           function grantAccess(pendingMemberId, pendingMemberName)
+           {
+                $.ajax(
+                {
+                    'type': "POST",
+                    'dataType': 'html',
+                    'url': "{% url 'org_home:grantAccessToPosition' %}",
+                    'data': {position_id: {{ position.id}}, user_id: parseInt(pendingMemberId) },
+                    'success': function(data) {
+                        var id = "#" + pendingMemberId + "_request";
+                        $(id).remove();
+                        $("#membersInPosition").append($("<li>" + pendingMemberName +  "</li>"));
+                    }
+                });
+           }
+        </script>
+
+    </main>
+
+{% endwith %}
+{% endblock %}

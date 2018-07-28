@@ -10,25 +10,15 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Categories
+from .models import Positions
 from org_work.models import Projects
 from home.models import Organizations
 from .forms import ParentCategories
 
-def getCategoryAncestors(category_id):
-    currentCategory = get_object_or_404(Categories,pk=category_id)
-    ancestors = []
-    while currentCategory.parent != None:
-        ancestors.insert(0,currentCategory.parent)
-        currentCategory = currentCategory.parent
-    return ancestors
 
-@csrf_exempt
-def userInCategory(request):
-    category_id = int(request.POST.get('category_id'))
-    category = get_object_or_404(Categories, pk=category_id)
-    if request.user in category.members.all():
-        return HttpResponse(1)
-    return HttpResponse(0)
+# ------------------------------------------------------------------------------------------------ #
+# organization
+#
 
 # org_home page of a coop
 @login_required
@@ -40,6 +30,60 @@ def IndexView(request,organization_id):
                     'categories_list':Categories.objects.filter(organization=organization),
                     'projects_list': Projects.objects.filter(organization=organization),
                   })
+
+# list of all members in an organization
+@login_required
+def orgMembersView(request,organization_id):
+    organization = get_object_or_404(Organizations,id=organization_id)
+    return render(request,'org_home/org_members.html',{'organization':organization,})
+
+# list of pending members in an organization
+@login_required
+def orgPendingMembersView(request,organization_id):
+    # this html is also called in GrantAccess
+    organization = get_object_or_404(Organizations,id=organization_id)
+    return render(request,'org_home/org_pending_members.html',{'organization':organization,})
+
+# join the organization
+@login_required
+def JoinOrganization(request,organization_id):
+    '''
+    if open organization, add user to members list of org
+    if closed org, add user to pending_members list of org
+    '''
+    organization = get_object_or_404(Organizations,id=organization_id)
+    # if org is open
+    if organization.closed_organization == False:
+        organization.members.add(request.user)
+    else:
+        organization.pending_members.add(request.user)
+    return HttpResponseRedirect(reverse('org_home:index', args=(organization.id,)))
+
+# grant access to someone to become a member of an organization
+@login_required
+def GrantAccessToOrg(request,organization_id,pending_member_id):
+    organization = get_object_or_404(Organizations,id=organization_id)
+    pending_member = User.objects.get(pk=pending_member_id)
+
+    # if any member can add pending members to category
+    if organization.gateKeeper == 'all_members':
+        if request.user in organization.members.all():
+            organization.members.add(pending_member)
+            organization.pending_members.remove(pending_member)
+    # if only moderator can add pending members to category
+    elif organization.gateKeeper == 'moderators':
+        if request.user in organization.moderators.all():
+            organization.members.add(pending_member)
+            organization.pending_members.remove(pending_member)
+        else:
+            return render(request,'org_home/org_pending_members.html',{'organization':organization,'error_message':'Must be a moderator to add user to ' +  organization })
+    return HttpResponseRedirect(reverse('org_home:orgPendingMembersView', args=(organization.id,)))
+
+
+# ------------------------------------------------------------------------------------------------ #
+# category... aka Department or Branch (within Organization)
+#
+
 
 # list of all the categories/root/branch in a coop DELETE THIS I THINK
 @login_required
@@ -62,6 +106,26 @@ def IndividualCategoryView(request,organization_id,category_id):
                                                             'ancestor_categories_list':ancestorCategories,
                                                             'projects_list':projects_list
                                                             })
+
+# --- helper functions -----
+
+def getCategoryAncestors(category_id):
+    currentCategory = get_object_or_404(Categories,pk=category_id)
+    ancestors = []
+    while currentCategory.parent != None:
+        ancestors.insert(0,currentCategory.parent)
+        currentCategory = currentCategory.parent
+    return ancestors
+
+@csrf_exempt
+def userInCategory(request):
+    category_id = int(request.POST.get('category_id'))
+    category = get_object_or_404(Categories, pk=category_id)
+    if request.user in category.members.all():
+        return HttpResponse(1)
+    return HttpResponse(0)
+
+# ---- creating a new category -----
 
 # page to create a new category/root/branch
 @login_required
@@ -137,7 +201,7 @@ def submitNewCategory(request,organization_id,category_id=None):
                 'error_message': "Please enter at least one category.",
             })
 
-# category access #
+# --- information within category -----
 
 # list of all members in a category
 @login_required
@@ -167,6 +231,8 @@ def modsView(request,organization_id,category_id):
     return render(request,'org_home/members.html',{'organization':organization,'category': category,
                                                    'categories_list':Categories.objects.filter(organization=organization)})
 
+
+# ---- Joining and Granting access to category ----
 # join a category
 @login_required
 def JoinCategory(request,organization_id,category_id):
@@ -205,57 +271,93 @@ def GrantAccess(request,organization_id,category_id,pending_member_id):
             category.members.add(pending_member)
             category.pending_members.remove(pending_member)
         else:
-            return render(request,'org_home/pendingMembers.html',{'organization':organization,'category': category,'error_message':'Must be a moderator to add user to ' +  category.category_name })
+            return render(request,'org_home/pendingMembers.html',{'organization':organization,'category': category,
+                                                                  'error_message':'Must be a moderator to add user to ' +  category.category_name })
     return HttpResponseRedirect(reverse('org_home:pendingMembersView', args=(organization.id,category.id,)))
 
 
+# ------------------------------------------------------------------------------------------------ #
+# Positions (in category)
+#
 
-# organization access #
-
-# list of all members in an organization
 @login_required
-def orgMembersView(request,organization_id):
+def positionsView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
-    return render(request,'org_home/org_members.html',{'organization':organization,})
+    category = get_object_or_404(Categories,pk=category_id)
+    positions = Positions.objects.filter(category=category)
+    ancestorCategories = getCategoryAncestors(category_id)
+    return render(request,'org_home/positions.html',{'organization':organization,'category': category,'positions': positions,
+                                                   'categories_list':Categories.objects.filter(organization=organization)})
 
-# list of pending members in an organization
 @login_required
-def orgPendingMembersView(request,organization_id):
-    # this html is also called in GrantAccess
+def individualPosition(request,organization_id,category_id,position_id):
     organization = get_object_or_404(Organizations,id=organization_id)
-    return render(request,'org_home/org_pending_members.html',{'organization':organization,})
+    category = get_object_or_404(Categories,pk=category_id)
+    position = get_object_or_404(Positions, pk=position_id)
+    users = position.position_holders
+    ancestorCategories = getCategoryAncestors(category_id)
+    return render(request,'org_home/individualPosition.html',{'organization':organization,'category': category,'position': position,'users':users,
+                                                   'categories_list':Categories.objects.filter(organization=organization)})
 
-# join the organization
 @login_required
-def JoinOrganization(request,organization_id):
-    '''
-    if open organization, add user to members list of org
-    if closed org, add user to pending_members list of org
-    '''
+def newPositionView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
-    # if org is open
-    if organization.closed_organization == False:
-        organization.members.add(request.user)
-    else:
-        organization.pending_members.add(request.user)
-    return HttpResponseRedirect(reverse('org_home:index', args=(organization.id,)))
+    category = get_object_or_404(Categories,pk=category_id)
+    positions = Positions.objects.filter(category=category)
+    ancestorCategories = getCategoryAncestors(category_id)
+    return render(request,'org_home/newPosition.html',{'organization':organization,'category': category,'positions': positions,
+                                                   'categories_list':Categories.objects.filter(organization=organization)})
 
-# grant access to someone to become a member of an organization
-@login_required
-def GrantAccessToOrg(request,organization_id,pending_member_id):
-    organization = get_object_or_404(Organizations,id=organization_id)
-    pending_member = User.objects.get(pk=pending_member_id)
+def submitNewPosition(request,organization_id,category_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+    category = get_object_or_404(Categories, pk=category_id)
+    positions = Positions.objects.filter(category=category)
 
-    # if any member can add pending members to category
-    if organization.gateKeeper == 'all_members':
-        if request.user in organization.members.all():
-            organization.members.add(pending_member)
-            organization.pending_members.remove(pending_member)
-    # if only moderator can add pending members to category
-    elif organization.gateKeeper == 'moderators':
-        if request.user in organization.moderators.all():
-            organization.members.add(pending_member)
-            organization.pending_members.remove(pending_member)
-        else:
-            return render(request,'org_home/org_pending_members.html',{'organization':organization,'error_message':'Must be a moderator to add user to ' +  organization })
-    return HttpResponseRedirect(reverse('org_home:orgPendingMembersView', args=(organization.id,)))
+    description = request.POST['positionDescription']
+    positionName = request.POST['positionName']
+    membersInPos = request.POST.getlist('membersInPos')
+
+    position = Positions.objects.create(category=category,
+                                        position_name=positionName,
+                                        description=description)
+
+    position.save()
+
+    for userId in membersInPos:
+        posUser = User.objects.filter(pk=userId)[0]
+        position.position_holders.add(posUser)
+
+    position.save()
+
+    return render(request, 'org_home/positions.html',
+                  {'organization': organization, 'category': category, 'positions': positions,
+                   'categories_list': Categories.objects.filter(organization=organization)})
+
+@csrf_exempt
+def requestToJoinPos(request):
+    position_id = int(request.POST['position_id'])
+    position = get_object_or_404(Positions, pk=position_id)
+    try:
+        position.position_requesters.add(request.user)
+        position.save()
+        return HttpResponse("Success: Added user")
+    except Exception as e:
+        return "Error: " + str(e)
+
+@csrf_exempt
+def grantAccessToPosition(request):
+
+    # !! in the future make it so that either the position holders or community vote
+    # !! or anybody who has the position or is an admin can grant access
+
+    position_id = int(request.POST['position_id'])
+    user_id = int(request.POST['user_id'])
+    position = get_object_or_404(Positions, pk=position_id)
+    requested_user = get_object_or_404(User, pk=user_id)
+
+    position.position_holders.add(requested_user)
+    position.position_requesters.remove(requested_user)
+    position.save()
+
+    return HttpResponse("Success: User Added")
+

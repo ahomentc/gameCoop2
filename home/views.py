@@ -10,6 +10,7 @@ from django.views import generic, View
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from consensusEditing.views import commitTextDocGit
 
 from .models import Organizations
 from org_home.models import Categories
@@ -71,9 +72,6 @@ def submitNewOrganization(request):
             'error_message': "Please enter a organization.",
         })
 
-
-# ALSO NEED A WAY TO REMOVE THESE FILES WHEN ORGANIZATION IS DELETED
-
 def CreateOrgFiles(organization_id):
 
     organization_id = str(organization_id)
@@ -129,3 +127,5 @@ def CreateOrgBaseFiles(organization_id):
               + text
 
     os.system(command)
+
+    commitTextDocGit(text_doc.pk)

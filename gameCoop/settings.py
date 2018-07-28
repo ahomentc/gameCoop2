@@ -71,6 +71,7 @@ INSTALLED_APPS = [
 
     'vote.apps.VoteConfig',
     'home.apps.HomeConfig',
+    'activity_feed.apps.ActivityFeedConfig',
     'consensusEditing.apps.ConsensuseditingConfig',
     'org_home.apps.OrgHomeConfig',
     'user_profiles.apps.UserProfilesConfig', #****

@@ -1,0 +1,27 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+    <main>
+        <ul>
+        {% for position in positions.all %}
+            <a href="{% url 'org_home:individualPosition' organization.id category.id position.id %}">{{ position.position_name }}</a><br/>
+        {% endfor %}
+        </ul>
+        <a href="{% url 'org_home:newPositionView' organization.id category.id %}">Create new Position</a>
+
+       <script>
+           function joinRequest(){
+                window.alert("Make the list of positions be checkboxes and this button transforms to 'join selected'. " +
+                    "When click the button an ajax http request is done.");
+            }
+       </script>
+
+    </main>
+
+{% endwith %}
+{% endblock %}

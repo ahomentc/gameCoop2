@@ -22,3 +22,10 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.category_name
+
+class Positions(models.Model):
+    category = models.ForeignKey(Categories, on_delete=models.CASCADE)
+    description = models.CharField(max_length=1000, blank=True, null=True)
+    position_name = models.CharField(max_length=250)
+    position_holders = models.ManyToManyField(User, related_name='position_holders', blank=True, null=True)
+    position_requesters = models.ManyToManyField(User, related_name='position_requesters', blank=True, null=True)

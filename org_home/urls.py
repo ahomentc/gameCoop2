@@ -26,9 +26,21 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/joinCategory$', views.JoinCategory, name='joinCategory'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/members$', views.membersView, name='membersView'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/moderators', views.modsView, name='modsView'),
+
+    # viewing and accepting pending members of category
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/pendingMembers$', views.pendingMembersView, name='pendingMembersView'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<pending_member_id>\d+)/grant_access$', views.GrantAccess, name='GrantAccess'),
 
-    #ajax
+    # positions
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/positions', views.positionsView, name='positionsView'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/newPositionView', views.newPositionView, name='newPositionView'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/submitNewPosition$', views.submitNewPosition,name='submitNewPosition'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<position_id>\d+)/$', views.individualPosition, name='individualPosition'),
+
+    # request to join position
+    url(r'^requestToJoinPos', views.requestToJoinPos, name='requestToJoinPos'),
+    url(r'^grantAccessToPosition', views.grantAccessToPosition, name='grantAccessToPosition'),
+
+    # helper
     url(r'^userInCategory',views.userInCategory,name='userInCategory'),
 ]

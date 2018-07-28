@@ -1,3 +1,14 @@
-<a href = "{% url 'org_home:index' organization.id %}">Home</a><br/>
-<h1>Welcome to the organizational structure home page</h1>
-<a href = "{% url 'consensusEditing:textDoc' monetaryDistributionDoc.id organization.id %}">Monetary Distribution</a><br/>
+{% extends "org_home/base.html"  %}
+{% load static %}
+
+{% block content2 %}
+{% with organization=organization categories_list=categories_list projects_list=projects_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+<main>
+    <h1>Welcome to the organizational structure home page</h1>
+    <a href = "{% url 'consensusEditing:textDoc' monetaryDistributionDoc.id organization.id %}">Monetary Distribution</a><br/>
+</main>
+
+{% endwith %}
+{% endblock %}

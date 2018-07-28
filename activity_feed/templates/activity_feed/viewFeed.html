@@ -1,0 +1,26 @@
+<!--Send an ajax request every couple of seconds to check for the new activites -->
+<!--Then post them here-->
+
+<div id="feed">
+
+</div>
+
+
+<script>
+
+    setInterval(function()
+    {
+        $.ajax(
+        {
+            'type': "POST",
+            'dataType': 'html',
+            'url': "{% url 'org_home:requestToJoinPos' %}",
+            'data': {position_id: {{ position.id}} },
+            'success':function(data)
+            {
+              //do something with response data
+            }
+        });
+    }, 10000);//time in milliseconds
+
+</script>

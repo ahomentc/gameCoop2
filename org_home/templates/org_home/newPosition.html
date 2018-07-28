@@ -1,0 +1,30 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+
+    <main>
+        <form style="margin-top: 20px;" action="{% url 'org_home:submitNewPosition' organization.id category.id %}" method="post">
+            {% csrf_token %}
+            <label>Name: </label>
+            <input title="positionName" name="positionName" type="text"/><br/><br/>
+
+            <label>Description: </label>
+            <input title="positionDescription" name="positionDescription" type="text"/><br/><br/>
+
+            <div style="border-style: solid; border-width:thin; border-color: #d6d6d8; padding:10px; margin-top: 10px; margin-bottom: 10px;">
+                <label>Add Members</label><br/><br/>
+                {% for member in category.members.all %}
+                    <input type="checkbox" title="membersInPos" name="membersInPos" value='{{ member.id }}' />
+                    <label>{{ member }}</label><br/>
+                {% endfor %}
+            </div>
+            <input style="float:right;" type="submit" value="Submit"/>
+        </form>
+
+    </main>
+
+{% endwith %}
+{% endblock %}

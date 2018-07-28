@@ -1,23 +1,33 @@
-<a href = "{% url 'org_home:index' organization.id %}">Home</a><br/>
+{% extends "org_home/base.html"  %}
+{% load static %}
 
-<div style="margin-left: 20%;">
-    <h2>{{ title }} Proposal</h2>
-    <button>yay</button>
-    <button>nay</button>
-    <p> Maybe have a discussion thing here on the side</p>
-</div>
-<form style="margin-left:20%;" action="{% url 'consensusEditing:editTextDoc' textdoc_id organization.id %}" method="post">
-    {% csrf_token %}
-    <div id="editAndSubmit">
+{% block content2 %}
+{% with organization=organization categories_list=categories_list projects_list=projects_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-        <input type="submit" value="Submit"/>
-        <input type="button"  id="editButton" value="Edit" onclick="enableEdit()"/>
-
+<main>
+    <div style="width:100%; margin-top:20px;">
+        <h2>{{ title }} Proposal</h2>
+        <button onclick="vote( {{ textdoc_id }} )">yay</button>
+        <button>nay</button> Need to still add to "voters" for nay
+        <p> Maybe have a discussion thing here on the side</p>
     </div>
 
-    <textarea readonly style="width:800px; height:600px; outline:none; color:slategrey; margin-top: 10px; border-color:lightgrey" id="contentEditor" name="content">{{ text }}</textarea><br/>
+    <form style="margin-top: 15px;" action="{% url 'consensusEditing:editTextDoc' textdoc_id organization.id %}" method="post">
+        {% csrf_token %}
+        <div id="editAndSubmit">
 
-</form>
+            <input type="submit" value="Submit"/>
+            <input type="button"  id="editButton" value="Edit" onclick="enableEdit()"/>
+
+        </div>
+
+        <textarea readonly hidden style="font-size:12; padding:5px; max-width:100%; width:100%; height:600px; outline:none; color:slategrey; margin-top: 27px; border-color:lightgrey" id="contentEditor" name="content">{{ text }}</textarea><br/>
+        <div id="viewText" style="border:1px solid lightgrey; padding:5px; width:98%; margin-top: 10px;">
+            <span id="viewTextSpan" style="white-space: pre-line; width:100%; height:600px; color:slategrey; margin-top: 10px;" >{{ text|safe }}</span><br/>
+        </div>
+    </form>
+</main>
 
 <script>
     function enableEdit(){
@@ -27,6 +37,9 @@
 
         document.getElementById("editButton").remove();
         document.getElementById("editAndSubmit").innerHTML += "<input id='doneButton' type='button' value='Done' onclick='endEdit()'/>"
+
+        document.getElementById("viewText").hidden = true;
+        document.getElementById("contentEditor").hidden = false;
     }
 
     function endEdit(){
@@ -36,6 +49,27 @@
 
         document.getElementById("doneButton").remove();
         document.getElementById("editAndSubmit").innerHTML += "<input id='editButton' type='button' value='Edit' onclick='enableEdit()'/>"
+
+        document.getElementById("viewText").hidden = false;
+        document.getElementById("contentEditor").hidden = true;
+        document.getElementById("viewTextSpan").innerText = document.getElementById("contentEditor").value;
     }
 
+    function vote(textdoc_id)
+        {
+            $.ajax(
+            {
+                'type': "POST",
+                'dataType': 'html',
+                'url': "{% url 'consensusEditing:proposalVote' %}",
+                'data': {text_proposal_id:textdoc_id},
+                'success': function () {
+                }
+            });
+            return HttpResponse(status=204)
+        }
+
 </script>
+
+{% endwith %}
+{% endblock %}

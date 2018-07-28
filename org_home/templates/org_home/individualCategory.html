@@ -8,14 +8,22 @@
     <main>
         {% if user in category.members.all %}
             <br/>
-            <a style="text-decoration:none;" href="">Info</a><br/>
+            <div class="categoryMenuItems">
+                <a style="text-decoration:none;" href="">Info</a>
+            </div>
             {% if user in category.moderators.all %}
-                <a style="text-decoration:none;" href="">Moderator Access</a><br/>
+                <div class="categoryMenuItems">
+                    <a style="text-decoration:none;" href="">Moderator Access</a>
+                </div>
             {% endif %}
             {% if category.closed_category %}
-                <a style="text-decoration:none;" href="{% url 'org_home:pendingMembersView' organization.id category.id %}">Pending Members</a><br/>
+                <div class="categoryMenuItems">
+                    <a style="text-decoration:none;" href="{% url 'org_home:pendingMembersView' organization.id category.id %}">Pending Members</a><br/>
+                </div>
             {% endif %}
-            <a style="text-decoration:none;" href="">Files</a><br/>
+            <div class="categoryMenuItems">
+                <a style="text-decoration:none;" href="">Files</a>
+            </div>
         {% endif %}
 
         {% if user in category.pending_members.all %}
@@ -24,14 +32,28 @@
 
         {% if user not in category.members.all %}
             <br/>
-            <a style="text-decoration:none;" href="{% url 'org_home:joinCategory' organization.id category.id %}">Join</a><br/>
-            <a style="text-decoration:none;" href="">Info</a><br/>
+            <div class="categoryMenuItems">
+                <div class="categoryMenuItems">
+                    <a style="text-decoration:none;" href="{% url 'org_home:joinCategory' organization.id category.id %}">Join</a>
+                </div>
+            </div>
+            <div class="categoryMenuItems">
+                <a style="text-decoration:none;" href="">Info</a><br/>
+            </div>
         {% endif %}
 
-        <a style="text-decoration:none;" href="{% url 'org_home:membersView' organization.id category.id %}">Members</a><br/>
-        <a style="text-decoration:none;" href="{% url 'org_home:modsView' organization.id category.id %}">Moderators</a><br/>
-        <a style="text-decoration:none;" href="">Positions</a>
-        <a style="text-decoration:none;" href="">Training</a>
+        <div class="categoryMenuItems">
+            <a style="text-decoration:none;" href="{% url 'org_home:membersView' organization.id category.id %}">Members</a>
+        </div>
+        <div class="categoryMenuItems">
+            <a style="text-decoration:none;" href="{% url 'org_home:modsView' organization.id category.id %}">Moderators</a>
+        </div>
+        <div class="categoryMenuItems">
+            <a style="text-decoration:none;" href="{% url 'org_home:positionsView' organization.id category.id %}">Positions</a>
+        </div>
+        <div class="categoryMenuItems">
+            <a style="text-decoration:none;" href="">Training</a>
+        </div>
 
     </main>
 
