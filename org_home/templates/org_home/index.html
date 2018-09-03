@@ -8,28 +8,35 @@
     {% if user in organization.members.all %}
         <main>
             <h1>{{ organization }}</h1>
-            <p>------------------------</p>
             {% if organization.closed_organization %}
-                <a style="text-decoration:none;" href="{% url 'org_home:orgPendingMembersView' organization.id %}">Pending Members</a><br/>
+                <div class="categoryMenuItems" style="height: 75px">
+                    <a style="text-decoration:none;" href="{% url 'org_home:orgPendingMembersView' organization.id %}">Pending Members</a>
+                </div><br/>
             {% endif %}
-            <a style="text-decoration:none;" href="{% url 'org_home:orgMembersView' organization.id %}">Members</a>
-            <p>------------------------</p>
+            <div class="categoryMenuItems" style="height: 75px">
+                <a style="text-decoration:none;" href="{% url 'org_home:orgMembersView' organization.id %}">Members</a>
+            </div>
+
+            <div class="categoryMenuItems" style="height: 75px">
+                <a href = "{% url 'org_struct:index' organization.id %}">Constitution</a>
+            </div>
+            <div class="categoryMenuItems" style="height: 75px">
+                <a href="">Contribution Percentages</a>
+            </div>
+
             {% if user.is_authenticated %}
             {% if member_categories_list %}
-            <h3> Your branches:</h3>
-                <ul>
-                {% for category in member_categories_list %}
-                    <li> <a style="text-decoration:none;" href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a> </li>
-                {% endfor %}
-                </ul>
+            <div style="border-width: thin; border-style: solid; border-color: #d6d6d8; padding-left:20px; margin-top: 10px; margin-bottom: 10px;">
+                <h3> Your branches:</h3>
+                    <ul>
+                    {% for category in member_categories_list %}
+                        <li><a style="text-decoration:none;" href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a></li>
+                    {% endfor %}
+                    </ul>
+            </div>
             {% endif %}
-            <p>------------------------</p>
             {% endif %}
-            <!--<a href = "{% url 'org_struct:index' organization.id %}">Organizational Structure</a><br/>-->
-            <a href = "{% url 'org_struct:index' organization.id %}">Constitution</a><br/>
-            <br/>
-            <a href="">Contribution Percentages</a>
-            <p>Andrei - 100%</p>
+
         </main>
     {% elif user in organization.pending_members.all %}
         <p>Pending membership</p>
@@ -39,11 +46,15 @@
         <a style="text-decoration:none;" href="">Info</a><br/>
     {% endif %}
 
-    <div id="feed">
-    <h2>Activity Feed</h2>
-        <p>Check the "in review" thing in gits. Then post them here</p>
-        <a href="">Jared changed the logo</a> <a href="">Yay</a> <a href="">Nay</a> <a href="">Discuss</a>
-    </div>
+    <!--<div id="feed">-->
+    <!--<h2>Activity Feed</h2>-->
+        <!--<p>Check the "in review" thing in gits. Then post them here</p>-->
+        <!--<a href="">Jared changed the logo</a> <a href="">Yay</a> <a href="">Nay</a> <a href="">Discuss</a>-->
+    <!--</div>-->
+
+    <!-- Activity Feed -->
+    {% include "activity_feed/viewFeed.html" with organization=organization %}
+
 
 
 {% endwith %}

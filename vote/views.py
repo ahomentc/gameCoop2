@@ -13,6 +13,10 @@ from django.contrib.auth.decorators import login_required
 from .models import Choice, Question
 from org_home.models import Categories
 from home.models import Organizations
+from discuss.models import Post
+
+from discuss.forms import newMainReply
+from discuss.RepliesHelper import ReplyHelper
 
 # decorator that checks if user is a member of the category
 def is_member(func):
@@ -55,12 +59,31 @@ def DetailView(request,organization_id,category_id,question_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(org_home_models.Categories,pk=category_id)
     question = get_object_or_404(Question,pk=question_id)
+    post = question.post
+
+    replyHelper = ReplyHelper(post, request.user)
+    sortedDict = replyHelper.getSortedDict()
+
+    repliesUserLiked = replyHelper.getRepliesUserLiked()
+    repliesUserDisliked = replyHelper.getRepliesUserDisliked()
+
+    userLikedPost = request.user in post.userUpVotes.all()
+    userDislikedPost = request.user in post.userDownVotes.all()
+
+    form = newMainReply()
+
     return render(request,'vote/detail.html',{
         'organization':organization,
         'category': category,
         'question':question,
+        'post': post,
         'choice_set':Question.objects.filter(pub_date__lte=timezone.now()),
-        'categories_list':Categories.objects.filter(organization=organization)
+        'categories_list':Categories.objects.filter(organization=organization),
+        'form': form, 'repliesDict': sortedDict,
+        'repliesUserLiked': repliesUserLiked,
+        'repliesUserDisliked': repliesUserDisliked,
+        'userLikedPost': userLikedPost,
+        'userDislikedPost': userDislikedPost
     })
 
 # shows the results of the vote so far
@@ -77,7 +100,7 @@ def ResultsView(request,organization_id,category_id,question_id):
         'question':question,
         'choice_set':Question.objects.filter(pub_date__lte=timezone.now()),
         'percent_voted':percentVoted,
-        'categories_list':Categories.objects.filter(organization=organization)
+        'categories_list':Categories.objects.filter(organization=organization),
     })
 
 # submit a vote
@@ -137,6 +160,19 @@ def submitNewPoll(request,organization_id,category_id):
         for c in request.POST:
             if 'choice' in c and request.POST[c] != "":
                 q.choice_set.create(choice_text = request.POST[c])
+
+        discussion = Post.objects.create(
+                discussionType='Voting',
+                category=category,
+                title=q.question_text,
+                content=q.question_text,
+                pub_date=timezone.now(),
+                original_poster=request.user
+            )
+
+        q.post = discussion
+        q.save()
+
         # if everything works send to the index page
         return HttpResponseRedirect(reverse('vote:index', args=(organization.id,category.id,)))
     else:

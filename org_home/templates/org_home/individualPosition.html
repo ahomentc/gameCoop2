@@ -52,7 +52,7 @@
                     'type': "POST",
                     'dataType': 'html',
                     'url': "{% url 'org_home:requestToJoinPos' %}",
-                    'data': {position_id: {{ position.id}} },
+                    'data': {position_id: {{ position.id }} },
                     'success': function(data) {
                         $('#request').remove();
                         $('#requestSent').show();

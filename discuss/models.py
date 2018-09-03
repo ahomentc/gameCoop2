@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from org_home import models as org_home_models
+from vote import models as vote_models
 from django.contrib.auth.models import User
 
 class Post(models.Model):

@@ -7,6 +7,7 @@ class ActivityPostAdmin(admin.ModelAdmin):
         ('activity_description',               {'fields': ['activity_description']}),
         ('link_to_change', {'fields': ['link_to_change']}),
         ('pub_date',         {'fields': ['pub_date']}),
+        ('organization', {'fields': ['organization']}),
     ]
 
 admin.site.register(ActivityPost, ActivityPostAdmin)

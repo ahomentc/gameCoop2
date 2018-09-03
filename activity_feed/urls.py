@@ -5,5 +5,6 @@ app_name = 'activity_feed'
 
 urlpatterns = [
     url(r'^submitActivityClient',views.submitActivityClient,name='submitActivityClient'),
+    url(r'^getActivities',views.getActivities,name='getActivities'),
 ]
 

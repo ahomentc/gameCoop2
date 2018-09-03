@@ -84,6 +84,128 @@ main {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
+.orgTypeButtons {
+     list-style-type:none;
+     margin:25px 0 0 55px;
+     padding:0;
+}
+
+.orgTypeButtons li {
+    float:left;
+    margin:0 10px 10px 0;
+    width:150px;
+    height:60px;
+    position:relative;
+    text-align: center;
+    vertical-align: middle;
+    line-height: 50px;
+}
+
+.orgTypeButtons label, .orgTypeButtons input {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.orgTypeButtons input[type="radio"] {
+    opacity:0.011;
+    z-index:100;
+}
+
+.orgTypeButtons input[type="radio"]:checked + label {
+    background: #ececee;
+}
+
+.orgTypeButtons label {
+     padding:5px;
+     border:1px solid #CCC;
+     cursor:pointer;
+     z-index:90;
+}
+
+.orgTypeButtons label:hover {
+     background: #f6f6f8;
+}
+
+
+
+.governanceButtons {
+    list-style-type:none;
+    margin:25px 0 0 55px;
+    padding:0;
+    height:150px;
+}
+
+.governanceButtons li {
+    float:left;
+    margin:0 10px 10px 0;
+    width:160px;
+    height:100px;
+    position:relative;
+    text-align: center;
+}
+
+.governanceButtons label, .governanceButtons input {
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+}
+
+.governanceButtons input[type="radio"] {
+    opacity:0.011;
+    z-index:100;
+}
+
+.governanceButtons input[type="radio"]:checked + label {
+    background: #ececee;
+}
+
+.governanceButtons label {
+    padding:5px;
+    padding-top: 20px;
+    border:1px solid #CCC;
+    cursor:pointer;
+    z-index:90;
+}
+
+.governanceButtons label:hover {
+     background: #f6f6f8;
+}
+
+
+
+
+
+.profitPartitions {
+    width:100%;
+    height:125px;
+    background-color: #ececec;
+    box-shadow: #dcdcde;
+}
+
+.resize-drag {
+  color: white;
+  font-size: 18px;
+  font-family: sans-serif;
+  padding: 20px;
+  height: 125px;
+  width: 33.3%;
+  float:left;
+
+  /* This makes things *much* easier */
+  box-sizing: border-box;
+}
+
+.shareDist {
+    margin-bottom:20px;
+}
+
 a {
     text-decoration: none;
 }

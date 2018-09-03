@@ -76,7 +76,8 @@ def editTextDoc(request, textdoc_id, organization_id=None):
     voteObj.save()
 
     # submit an activity
-    submitActivity(str(request.user) + " proposed an edit to " + str(text_doc.title), "{% url 'consensusEditing:viewTextProposal'" + str(proposal_text_doc.id) + " " + str(organization.id) + " %}", organization_id)
+    url = reverse('consensusEditing:viewTextProposal', args=(proposal_text_doc.id,organization.id))
+    submitActivity(str(request.user) + " proposed an edit to " + str(text_doc.title), url, organization_id)
 
 
     # in the proposals folder create a folder with the id of the main text doc and put the proposal doc in there

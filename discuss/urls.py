@@ -8,7 +8,9 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/submitNewPost', views.submitNewPost, name='submitNewPost'),
 
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/submitReply$', views.submitReply, name='submitReply'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/(?P<question_id>\d+)/submitReply$', views.submitReply, name='submitReplyQuestion'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/(?P<parent_id>\d+)/submitReply$', views.submitReply, name='submitSubReply'),
+    url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/(?P<parent_id>\d+)/(?P<question_id>\d+)/submitReply$', views.submitReply, name='submitSubReplyQuestion'),
 
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/(?P<reply_id>\d+)/editReply', views.editReply, name='editReply'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/(?P<post_id>\d+)/(?P<reply_id>\d+)/deleteReply', views.deleteReply, name='deleteReply'),

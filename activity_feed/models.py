@@ -13,6 +13,6 @@ class ActivityPost(models.Model):
     category = models.ForeignKey(org_home_models.Categories, on_delete=models.CASCADE, blank=True, null=True)
     pub_date = models.DateTimeField('date published', blank=True, null=True)
     activity_description = models.CharField(max_length=100)
-    link_to_change = models.URLField()
+    link_to_change = models.CharField(max_length=500)
 
     # type = models.CharField(max_length=100)  #tentative

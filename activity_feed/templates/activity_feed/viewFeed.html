@@ -2,25 +2,58 @@
 <!--Then post them here-->
 
 <div id="feed">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <h2>Activity Feed</h2>
+    <ul id="activities" style="padding: 0px">
 
+    </ul>
 </div>
 
 
 <script>
 
-    setInterval(function()
+    document.addEventListener('DOMContentLoaded', updateActivies, false);
+
+    setInterval(updateActivies, 60000);//time in milliseconds (60 seconds)
+
+    function updateActivies()
     {
         $.ajax(
         {
-            'type': "POST",
+            'type': "GET",
             'dataType': 'html',
-            'url': "{% url 'org_home:requestToJoinPos' %}",
-            'data': {position_id: {{ position.id}} },
+            'url': "{% url 'activity_feed:getActivities' %}",
+            'data': {organization_id: {{ organization.id }} },
             'success':function(data)
             {
               //do something with response data
+                var json_data = JSON.parse(data);
+                // console.log(json_data[0].activity_description);
+                for(var count in json_data)
+                {
+                    var activity = json_data[count];
+                    var id = activity.id;
+                    var activityId = "activity_" + id.toString();
+                    var url = activity.link_to_change;
+                    if(!document.getElementById(activityId))
+                    {
+                        $("#activities").prepend($("<div style='border-style:solid; border-width:thin; border-color: #d6d6d8; padding:10px; margin-top: 10px; margin-bottom: 10px;'>" +
+                            timeAgo(activity.pub_date) +
+                            "<a style='margin-left: 10px;' href='" + url + "' id='" + activityId + "'>" + activity.activity_description + "</a><a style='margin-left: 10px;' href=''>Vote</a>" +
+                            "</div><br/>"));
+                    }
+                }
             }
         });
-    }, 10000);//time in milliseconds
+    }
+
+    function timeAgo(date)
+    {
+        var now = new Date();
+        console.log(date);
+        return "Time Since";
+    }
+
+
 
 </script>

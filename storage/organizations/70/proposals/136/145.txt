@@ -1,0 +1,36 @@
+------------------------
+Revenue Money:
+Base Payment + benefits*
+* actually 0 for now
+Development Costs: Revenue - Base Payment
+100% development costs
+Profit: Revenue - Base Payment - Development Costs
+-------------------------
+
+Profit Money:
+40%: Worker Payment*
+* Work payment Individually distributed by Percent = Individual Points / Total Points
+
+30%: Investor Payments
+___40% first round investors
+___30% second round investors
+___30% investors after second round
+14%: Company Money Bank
+10%: Founding Team Payment
+___* Max of 0 Million per individual per year
+___50% Andrei
+___50% tbd
+6%: Service Cost
+-------------------------
+
+Investment Money:
+* This is default, each investor can choose their percentages *
+
+60%: Development Costs
+100% development costs
+40%: Base Payment*
+* actually 0 for now
+
+Stefan.
+tweed
+

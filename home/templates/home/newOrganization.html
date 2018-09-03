@@ -1,39 +1,67 @@
+{% extends "home/base.html"  %}
+{% load static %}
+
+{% block content %}
+
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
+<main>
+    <form action="{% url 'home:submitNewPotentialOrg' %}" method="post">
+    {% csrf_token %}
+        <h1>Create new Organization</h1>
+        <div id="forms">
+            <label>Name: </label>
+            <input type="text" name="new_organization" id="new_organization"/><br/><br/>
 
-<form action="{% url 'home:submitNewOrganization' %}" method="post">
-{% csrf_token %}
-    <h1>Create new Branch</h1>
-    <div id="forms">
-        <label>Name: </label>
-        <input type="text" name="new_organization" id="new_organization"/><br/><br/>
-        <label>Need permission to join? </label>
-        <input type="checkbox" onclick="permission()" name="closed_organization" id="closed_organization"/><br/><br/>
-        <label id="1" style="display:none">Who can grant permission? </label><br/>
-        <label id="2" style="display:none">All Members</label>
-        <input type="radio" name="access" id="members_access" value="all_members" style="display:none"/><br/>
-        <label id="3" style="display:none">Moderator</label>
-        <input type="radio" name="access" id="moderators_access" value="moderators" style="display:none"/><br/><br/>
-    </div>
-    <input type="submit" value="Submit"/>
-</form>
+            <label>Description: </label>
+            <input type="text" name="new_organization_desc" id="new_organization_desc"/><br/><br/>
+        </div>
+        <input style="float:right" type="submit" value="Next"/>
+    </form>
+</main>
 
-<script>
-function permission(){
+{% endblock %}
 
-    if (document.getElementById('closed_organization').checked){
-        document.getElementById("members_access").style.display = '';
-        document.getElementById("moderators_access").style.display = '';
-        document.getElementById("1").style.display = '';
-        document.getElementById("2").style.display = '';
-        document.getElementById("3").style.display = '';
-        }
-    else{
-        document.getElementById("members_access").style.display = 'none';
-        document.getElementById("moderators_access").style.display = 'none';
-        document.getElementById("1").style.display = 'none';
-        document.getElementById("2").style.display = 'none';
-        document.getElementById("3").style.display = 'none';
-        }
-    }
-</script>
+
+
+
+
+<!--{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}-->
+
+
+<!--<form action="{% url 'home:submitNewOrganization' %}" method="post">-->
+<!--{% csrf_token %}-->
+    <!--<h1>Create new Branch</h1>-->
+    <!--<div id="forms">-->
+        <!--<label>Name: </label>-->
+        <!--<input type="text" name="new_organization" id="new_organization"/><br/><br/>-->
+        <!--<label>Need permission to join? </label>-->
+        <!--<input type="checkbox" onclick="permission()" name="closed_organization" id="closed_organization"/><br/><br/>-->
+        <!--<label id="1" style="display:none">Who can grant permission? </label><br/>-->
+        <!--<label id="2" style="display:none">All Members</label>-->
+        <!--<input type="radio" name="access" id="members_access" value="all_members" style="display:none"/><br/>-->
+        <!--<label id="3" style="display:none">Moderator</label>-->
+        <!--<input type="radio" name="access" id="moderators_access" value="moderators" style="display:none"/><br/><br/>-->
+    <!--</div>-->
+    <!--<input type="submit" value="Submit"/>-->
+<!--</form>-->
+
+<!--<script>-->
+<!--function permission(){-->
+
+    <!--if (document.getElementById('closed_organization').checked){-->
+        <!--document.getElementById("members_access").style.display = '';-->
+        <!--document.getElementById("moderators_access").style.display = '';-->
+        <!--document.getElementById("1").style.display = '';-->
+        <!--document.getElementById("2").style.display = '';-->
+        <!--document.getElementById("3").style.display = '';-->
+        <!--}-->
+    <!--else{-->
+        <!--document.getElementById("members_access").style.display = 'none';-->
+        <!--document.getElementById("moderators_access").style.display = 'none';-->
+        <!--document.getElementById("1").style.display = 'none';-->
+        <!--document.getElementById("2").style.display = 'none';-->
+        <!--document.getElementById("3").style.display = 'none';-->
+        <!--}-->
+    <!--}-->
+<!--</script>-->

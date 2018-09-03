@@ -1,4 +1,4 @@
-.expandButton{
+.expandButton {
     background:none;
     border-radius:20px;
 
@@ -6,10 +6,10 @@
     padding:3 7 7;
 }
 
-.categoryMenuItems{
+.categoryMenuItems {
     border-style: solid;
-    width: 80px;
-    height: 70px;
+    width: 90px;
+    height: 80px;
     margin:10px;
     display:inline-grid;
     border-width: thin;
@@ -20,11 +20,45 @@
     border-radius: 8px;
 }
 
-aside{
+aside {
     display:grid;
     grid-template-rows: min-content;
     grid-row:2/5;
     grid-column:1;
+}
+
+#vote {
+    padding: 20 20 20 20;
+    grid-column: 2/3;
+    grid-row: 2;
+    margin-left: 0;
+    margin-right: auto;
+    margin-top: 20px;
+    width: 60%;
+    align-self: start;
+    background-color:white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
+}
+
+#discuss {
+    padding: 20 20 20 20;
+    grid-column: 2/3;
+    grid-row: 3;
+    margin-left: 0;
+    margin-right: auto;
+    margin-top: 10px;
+    width: 60%;
+    align-self: start;
+    background-color:white;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
 #categoriesNav {

@@ -13,6 +13,7 @@ from org_home.models import Categories
 from home.models import Organizations
 from .models import Post,Reply
 from .forms import newPost,newMainReply
+from .RepliesHelper import ReplyHelper
 
 # decorator that checks if user is a member of the category
 def is_member(func):
@@ -101,7 +102,7 @@ def submitNewPost(request,organization_id,category_id):
         form = newPost(request.POST)
         if form.is_valid():
             discussionType = request.POST['discussionType']
-            Post.objects.create(
+            post = Post.objects.create(
                 discussionType=discussionType,
                 category=category,
                 title=request.POST['title'],
@@ -109,6 +110,7 @@ def submitNewPost(request,organization_id,category_id):
                 pub_date=timezone.now(),
                 original_poster=request.user
             )
+
             # go to the page that the post was created for
             if discussionType == 'Idea':
                 return HttpResponseRedirect(reverse('discuss:IdeaDiscussion', args=(organization.id,category.id)))
@@ -120,52 +122,6 @@ def submitNewPost(request,organization_id,category_id):
         form = newPost()
     return render(request,'discuss/newPost.html',{'organization':organization,'category':category,'form':form})
 
-# recursively get an infinitely nested dictionary of all the replies
-def getRepliesNestedDict(highestList,post):
-    tempDict = {}
-    for element in highestList:
-        subReplies = Reply.objects.filter(post=post,parent=element)
-        if len(subReplies) == 0:
-            tempDict[element] = None
-        else:
-            tempDict[element] = getRepliesNestedDict(subReplies,post)
-    return tempDict
-
-# returns a dictionary where the subdictionaries have been flattened to a list
-def correctlyFormatDict(dict):
-    newDict = {}
-    for key,value in dict.items():
-        if value is None:
-            newDict[key] = None
-        else:
-            newDict[key] = sorted(flattenDict(value),key=lambda x:x.pub_date,reverse=False)
-    return newDict
-
-# recursively flattens a dictionary that looks like this: {a:{b:None,c:{d:None}},e:None} to a list [a,b,c,d,e]
-def flattenDict(dict):
-    tempList = []
-    for key,value in dict.items():
-        tempList = tempList + [key]
-        if value != None:
-            tempList = tempList + flattenDict(value)
-    return tempList
-
-def getRepliesUserLiked(post,user):
-    allReplies = Reply.objects.filter(post=post)
-    replies = []
-    for reply in allReplies:
-        if user in reply.userUpVotes.all():
-            replies.append(reply)
-    return replies
-
-def getRepliesUserDisliked(post,user):
-    allReplies = Reply.objects.filter(post=post)
-    replies = []
-    for reply in allReplies:
-        if user in reply.userDownVotes.all():
-            replies.append(reply)
-    return replies
-
 @is_member
 @login_required
 # shows an individual post and all the replies to it
@@ -174,16 +130,11 @@ def IndividualPost(request,organization_id,category_id,post_id):
     category = get_object_or_404(Categories,pk=category_id)
     post = get_object_or_404(Post,pk=post_id)
 
-    # list of replies that are not replies to a reply to the post
-    noParentsList = Reply.objects.filter(post=post,parent__isnull=True).order_by('-pub_date')
-    # dictionary with    keys: noParentsList items   values: list of all the replies to each key
-    sortedDict = {}
-    repliesDict = correctlyFormatDict(getRepliesNestedDict(noParentsList,post))
-    for key in sorted(repliesDict.keys(),key=lambda x: x.pub_date):
-        sortedDict[key] = repliesDict[key]
+    replyHelper = ReplyHelper(post,request.user)
+    sortedDict = replyHelper.getSortedDict()
 
-    repliesUserLiked = getRepliesUserLiked(post,request.user)
-    repliesUserDisliked = getRepliesUserDisliked(post, request.user)
+    repliesUserLiked = replyHelper.getRepliesUserLiked()
+    repliesUserDisliked = replyHelper.getRepliesUserDisliked()
 
     userLikedPost = request.user in post.userUpVotes.all()
     userDislikedPost = request.user in post.userDownVotes.all()
@@ -199,7 +150,7 @@ def IndividualPost(request,organization_id,category_id,post_id):
 @is_member
 @login_required
 # submit a reply
-def submitReply(request,organization_id,category_id,post_id,parent_id=None):
+def submitReply(request,organization_id,category_id,post_id,parent_id=None,question_id=None):
     organization = get_object_or_404(Organizations,pk=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
     post = get_object_or_404(Post,pk=post_id)
@@ -219,9 +170,14 @@ def submitReply(request,organization_id,category_id,post_id,parent_id=None):
                 user=request.user,
                 pub_date=timezone.now()
             )
-            return HttpResponseRedirect(reverse('discuss:IndividualPost', args=(organization.id,category.id,post.id)))
+            if question_id:
+                return HttpResponseRedirect(reverse('vote:detail', args=(organization.id, category.id, question_id)))
+            else:
+                return HttpResponseRedirect(reverse('discuss:IndividualPost', args=(organization.id,category.id,post.id)))
     else:
         form = newMainReply()
+
+    # maybe add the if question_id thing here too
     return render(request,'discuss/individualPost.html',{'organization':organization,'category':category,'post':post,'form':form})
 
 

@@ -1,0 +1,140 @@
+{% extends "home/base.html"  %}
+{% load static %}
+
+{% block content %}
+<script src="http://code.interactjs.io/v1.3.4/interact.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<main>
+    <form action="{% url 'home:submitMonetaryDist' organization.id %}" method="post">
+    {% csrf_token %}
+        <div id="forms">
+            <h1 style="margin-left: 30%">Set Monetary Distribution: </h1>
+            <br/>
+            <h3>Profit Split: </h3>
+            <div class="profitPartitions">
+                <div style="background-color:#29e" class="resize-drag">
+                    Investors, Workers, Founders:
+                    <br/><br/>
+                    <input value="80" type="number" style="width:40px; margin-left:45px; margin-right: 5px;" name="profitPartitions" id="iwfPercent"/>%
+                </div>
+                <div style="background-color:#1b78bb" class="resize-drag">
+                    Organization Bank:
+                    <br/><br/><br/>
+                    <input value="14" type="number" style="width:40px; margin-left:45px; margin-right: 5px;" name="profitPartitions" id="orgBankPercent"/>%
+                </div>
+                <div style="background-color:#166298" class="resize-drag">
+                    Service:
+                    <br/><br/>
+                    <p style="margin-left: 40%">6%</p>
+                </div>
+            </div>
+
+            <br/>
+
+            <h3>Share Rewards:</h3>
+            <div style="border-style: dashed; border-color: #8f8f8f; color:grey; border-width: thin; padding:10px;text-align: center;vertical-align: middle;">
+                Total number of shares in Organization starts at 0
+            </div>
+            <ul style="margin: 20px;list-style: none;">
+                <li class="shareDist"><label>Shares per $1 invested: </label><input value="100" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="sharesPerDollar" id="sharesPerDollar"/></li>
+                <li class="shareDist"><label>Shares Per Upvote on Forum Post: </label><input value="0" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="sharesPerForumUpvote" id="sharesPerForumUpvote"/></li>
+                <li class="shareDist"><label>Shares Per Upvote on Contribution: </label><input value="10" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="sharesPerContribUpvote" id="sharesPerContribUpvote"/></li>
+                <li class="shareDist"><label>Shares per Accepted Posted Idea: </label><input value="100" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="sharesPerAcceptedIdea" id="sharesPerAcceptedIdea"/></li>
+                <li class="shareDist"><label>Base number of shares per used contribution: </label><input value="100" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="baseNumberSharesUsedContrib" id="baseNumberSharesUsedContrib"/></li>
+                <li class="shareDist"><label>Shares for being one of the first </label><input value="10" type="number" style="width:40px; margin-left:5px; margin-right: 5px;" name="initialFounderNum" id="initialFounderNum"/><label> people to join and contribute: </label><input value="100000" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="initialFounderBonus" id="initialFounderBonus"/></li>
+                <li><br/></li>
+                <li class="shareDist"><label>Shares for each use of code written (in other peices of code or other): </label><input value="50" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="codeUseReward" id="codeUseReward"/></li>
+                <li class="shareDist"><label>Shares per line of approved code: </label><input value="100" type="number" style="width:60px; margin-left:5px; margin-right: 5px;" name="SharesPerLine" id="SharesPerLine"/></li>
+                <li><br/></li>
+                <li class="shareDist"><label>Use machine learning to set value to contributions? </label><br/><label>Yes</label><input type="radio" name="machine_learning_distr" id="machine_learning_distr_yes" value="true"/><label>No</label><input type="radio" name="machine_learning_distr" id="machine_learning_distr_no" value="false" checked/></li>
+            </ul>
+
+        </div>
+        <br/><br/><br/><br/><br/>
+
+        <input style="float:right" type="submit" value="Next"/>
+    </form>
+
+
+
+<!-- The resizable tiles... do this later instead of current -->
+
+
+<!--<main>-->
+    <!--<form action="{% url 'home:submitMonetaryDist' organization.id %}" method="post">-->
+    <!--{% csrf_token %}-->
+        <!--<div id="forms">-->
+            <!--<h1 style="margin-left: 30%">Set Monetary Distribution: </h1>-->
+            <!--<br/>-->
+            <!--<h3>Profit Split: </h3>-->
+            <!--<div class="profitPartitions">-->
+                <!--<div style="background-color:#29e" class="resize-drag">-->
+                    <!--Investors, Workers, Founders: 50%-->
+                <!--</div>-->
+                <!--<div style="background-color:#1b78bb" class="resize-drag">-->
+                    <!--Org Bank: 50%-->
+                <!--</div>-->
+            <!--</div>-->
+
+        <!--</div>-->
+        <!--<br/><br/><br/><br/><br/>-->
+
+        <!--<input style="float:right" type="submit" value="Next"/>-->
+    <!--</form>-->
+
+<!--<script>-->
+    <!--interact('.resize-drag')-->
+      <!--.draggable({-->
+        <!--onmove: window.dragMoveListener,-->
+        <!--restrict: {-->
+          <!--restriction: 'parent',-->
+          <!--elementRect: { top: 0, left: 0, bottom: 1, right: 1 }-->
+        <!--},-->
+      <!--})-->
+      <!--.resizable({-->
+        <!--// resize from all edges and corners-->
+        <!--edges: { left: true, right: true, bottom: true, top: true },-->
+
+        <!--// keep the edges inside the parent-->
+        <!--restrictEdges: {-->
+          <!--outer: 'parent',-->
+          <!--endOnly: true,-->
+        <!--},-->
+
+        <!--// minimum size-->
+        <!--restrictSize: {-->
+          <!--min: { width: 0, height: 125 },-->
+          <!--max: { width: $('.profitPartitions').width()/2, height: 125 }-->
+        <!--},-->
+
+        <!--inertia: true,-->
+      <!--})-->
+      <!--.on('resizemove', function (event) {-->
+        <!--var target = event.target,-->
+            <!--x = (parseFloat(target.getAttribute('data-x')) || 0),-->
+            <!--y = (parseFloat(target.getAttribute('data-y')) || 0);-->
+
+        <!--// update the element's style-->
+        <!--target.style.width  = event.rect.width + 'px';-->
+        <!--target.style.height = event.rect.height + 'px';-->
+
+        <!--// translate when resizing from top or left edges-->
+        <!--x += event.deltaRect.left;-->
+        <!--y += event.deltaRect.top;-->
+
+        <!--target.style.webkitTransform = target.style.transform =-->
+            <!--'translate(' + x + 'px,' + y + 'px)';-->
+
+        <!--target.setAttribute('data-x', x);-->
+        <!--target.setAttribute('data-y', y);-->
+        <!--// target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height);-->
+        <!--target.textContent = "Investors, Workers, Founders: " + Math.round(event.rect.width / $('.profitPartitions').width() * 100) + "%";-->
+      <!--});-->
+<!--</script>-->
+
+</main>
+
+{% endblock %}

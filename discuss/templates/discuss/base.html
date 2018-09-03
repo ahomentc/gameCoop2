@@ -8,9 +8,10 @@
       <main>
           <h1>{{ category }} Discussion</h1>
           <a href="{% url 'discuss:Index' organization.id category.id %}">General</a>
+          <label style="margin-left:5px;margin-right:5px;">|</label>
           <a href="{% url 'discuss:IdeaDiscussion' organization.id category.id %}">Ideas</a>
-          <a href="{% url 'discuss:VotingDiscussion' organization.id category.id %}">Decisions</a>
-
+          <label style="margin-left:5px;margin-right:5px;">|</label>
+          <!--<a href="{% url 'discuss:VotingDiscussion' organization.id category.id %}">Decisions</a>-->
           <a href="{% url 'discuss:newPost' organization.id category.id %}">Submit new Post</a><br/>
 
           <br/>{{ no_posts_message }}

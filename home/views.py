@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from consensusEditing.views import commitTextDocGit
 
 from .models import Organizations
+from .models import MonetaryDistribution
 from org_home.models import Categories
 from consensusEditing.models import TextDoc
 
@@ -29,6 +30,112 @@ def OrganizationView(request):
 @login_required
 def newOrganizationView(request):
     return render(request, 'home/newOrganization.html')
+
+@login_required
+def orgTypeView(request,organization_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+    return render(request, 'home/orgType.html',{'organization':organization})
+
+@login_required
+def setMonetaryDistView(request, organization_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+    return render(request, 'home/setMonetaryDistribution.html', {'organization': organization})
+
+@login_required
+def setGovernanceView(request, organization_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+    return render(request, 'home/setGovernance.html', {'organization': organization})
+
+@login_required
+def submitNewPotentialOrg(request):
+    if 'new_organization' in request.POST and request.POST['new_organization'] != '':
+        # get the organization name
+        organizationName = request.POST['new_organization']
+
+        # first word in organization name uppercased
+        formatedOrganizationName = ' '.join(word[0].upper() + word[1:] for word in organizationName.split())
+
+        # returns error if the organization name already exists
+        if Organizations.objects.filter(organization_name=formatedOrganizationName).exists():
+            return render(request, 'home/newOrganization.html',
+                          {'error_message': formatedOrganizationName + " already exists.", })
+
+        # get the description
+        description = request.POST['new_organization_desc']
+
+        # create the organization, add the creator to the members list, and make the creator a moderator
+        organization = Organizations.objects.create(organization_name=formatedOrganizationName,description=description)
+        organization.members.add(request.user)
+        organization.moderators.add(request.user)
+
+        return HttpResponseRedirect(reverse('home:orgTypeView', args=(organization.id,)))
+
+    else:
+        return render(request, 'home/newOrganization.html', {
+            'error_message': "Please enter a organization.",
+        })
+
+@login_required
+def submitOrgType(request,organization_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+
+    if 'org_type' in request.POST:
+        organization.organization_type = request.POST['org_type']
+        return HttpResponseRedirect(reverse('home:setMonetaryDistView', args=(organization.id,)))
+    else:
+        return render(request, 'home/orgType.html', {'organization': organization,
+                                                     'error_message':'Please select a type of organization'})
+
+
+@login_required
+def submitMonetaryDist(request, organization_id):
+    organization = get_object_or_404(Organizations, id=organization_id)
+
+    monetaryDist = MonetaryDistribution.objects.create(organization=organization)
+
+    if 'iwfPercent' in request.POST:
+        monetaryDist.InvestorsWorkersFounders = request.POST['iwfPercent']
+
+    if 'orgBankPercent' in request.POST:
+        monetaryDist.OrgBank = request.POST['orgBankPercent']
+
+    if 'sharesPerDollar' in request.POST:
+        monetaryDist.sharesPerDollarInvested = request.POST['sharesPerDollar']
+
+    if 'sharesPerForumUpvote' in request.POST:
+        monetaryDist.sharesPerUpvoteOnForumPost = request.POST['sharesPerForumUpvote']
+
+    if 'sharesPerContribUpvote' in request.POST:
+        monetaryDist.sharesPerUpvoteOnContribution = request.POST['sharesPerContribUpvote']
+
+    if 'sharesPerAcceptedIdea' in request.POST:
+        monetaryDist.sharesPerAcceptedPostedIdea = request.POST['sharesPerAcceptedIdea']
+
+    if 'baseNumberSharesUsedContrib' in request.POST:
+        monetaryDist.sharesPerUsedContrib = request.POST['baseNumberSharesUsedContrib']
+
+    if 'initialFounderNum' in request.POST:
+        monetaryDist.numOriginalFounders = request.POST['initialFounderNum']
+
+    if 'initialFounderBonus' in request.POST:
+        monetaryDist.sharesPerFounderBonus = request.POST['initialFounderBonus']
+
+    if 'codeUseReward' in request.POST:
+        monetaryDist.sharesPerEachUseOfCode = request.POST['codeUseReward']
+
+    if 'SharesPerLine' in request.POST:
+        monetaryDist.sharesPerLineAcceptedCode = request.POST['SharesPerLine']
+
+    if 'machine_learning_distr' in request.POST:
+        if request.POST['machine_learning_distr'] == 'true':
+            monetaryDist.machineLearningShareDistr = True
+        elif request.POST['machine_learning_distr'] == 'false':
+            monetaryDist.machineLearningShareDistr = False
+
+    monetaryDist.save()
+
+    return HttpResponseRedirect(reverse('home:setGovernanceView', args=(organization.id,)))
+
 
 # submit creation of a new organization
 @login_required

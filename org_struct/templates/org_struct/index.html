@@ -6,8 +6,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
 <main>
-    <h1>Welcome to the organizational structure home page</h1>
-    <a href = "{% url 'consensusEditing:textDoc' monetaryDistributionDoc.id organization.id %}">Monetary Distribution</a><br/>
+    <h2>Constitution</h2>
+    <a href = "{% url 'consensusEditing:textDoc' monetaryDistributionDoc.id organization.id %}">1. Monetary Distribution</a><br/>
 </main>
 
 {% endwith %}

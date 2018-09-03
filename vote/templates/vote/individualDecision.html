@@ -1,11 +1,13 @@
 {% extends "org_home/base.html" %}
 {% load static %}
+{% load discuss_extras %}
 
 {% block content2 %}
 {% with organization=organization category=category categories_list=categories_list %}
     <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
 
-    <main>
+
+    <div id="vote">
         <h1>{{ question.question_text }}</h1>
 
         {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -22,7 +24,412 @@
         </form>
 
         <a href="{% url 'vote:index' organization.id category.id %}">Back</a></li>
-    </main>
+    </div>
+
+
+    <div id="discuss">
+        <div>
+            <p style="color:grey; height:4px">submitted by <a href="{% url 'user_profiles:ProfileView' post.original_poster %}">{{ post.original_poster }}</a></p>
+            <div style="background-color: #F8F7F7; display: inline-block; border-radius: 8px; padding:0px; margin-bottom: 10px; margin-top: 5px; min-height: 70px; width:100%">
+                <div class="vote-buttons" style="float:right; vertical-align:top; margin-left: 10px; margin-right: 20px; padding-left:5px; padding-bottom:0px; padding-top: 10px;">
+                    {% if not userLikedPost %}
+                        <img style="cursor: pointer;" class="vote-up-post" id="{{post.id}}_postUp"  src="https://i.imgur.com/3Pey35k.png" width="12" height="12"/>
+                    {% else %}
+                        <img style="cursor: pointer;" class="vote-up-post selected" id="{{post.id}}_postUp" src="https://i.imgur.com/MKzD4pl.png" width="12" height="12"/>
+                    {% endif %}
+
+                    <p id="{{post.id}}_score" style="text-align:center; padding:0;margin:5px 0px 5px 0px">{{ post.userUpVotes.count|subtract:post.userDownVotes.count }}</p>
+
+                    {% if not userDislikedPost %}
+                        <img style="cursor: pointer;" class="vote-down-post" id="{{post.id}}_postDown" src="https://i.imgur.com/G008NCi.png" width="12" height="12"/>
+                    {% else %}
+                        <img style="cursor: pointer;" class="vote-down-post selected" id="{{post.id}}_postDown" src="https://i.imgur.com/WxXRt2B.png" width="12" height="12"/>
+                    {% endif %}
+                </div>
+
+                <p style="vertical-align: top; padding:10px; margin: 0px; ">{{ post.content }}</p>
+            </div>
+            <form action="{% url 'discuss:submitReply' organization.id category.id post.id %}" method="post">
+            {% csrf_token %}
+                {{ form }}
+            <br/><input type="submit" value="Submit" />
+            </form>
+        </div>
+
+        <!--do this stuff in ajax so the page doesn't refresh-->
+        <ul style="list-style: none; padding: 0;">
+
+            <!--This is the main reply-->
+            {% for key,valuesList in repliesDict.items %}
+                <li>
+                    <div style="background-color: #F8F7F7; border-radius: 8px; padding:0px; width:100%">
+                        <p style="height:4px; color:grey; padding-top:10px;padding-left:10px"> <a style="text-decoration:none" href="{% url 'user_profiles:ProfileView' key.user %}">{{ key.user }}</a> {{ key.pub_date|timesince }} ago</p>
+
+                        <!--liking/disliking-->
+                        <div class="vote-buttons" style="float:right; vertical-align: middle; margin-left: 10px; margin-right: 20px; padding-left:5px; padding-bottom:0px">
+                            {% if repliesUserLiked is None or key not in repliesUserLiked %}
+                                <img style="cursor: pointer;" class="vote-up" id="{{key.id}}_replyUp"  src="https://i.imgur.com/3Pey35k.png" width="12" height="12"/>
+                            {% else %}
+                                <img style="cursor: pointer;" class="vote-up selected" id="{{key.id}}_replyUp" src="https://i.imgur.com/MKzD4pl.png" width="12" height="12"/>
+                            {% endif %}
+
+                            <p id="{{key.id}}_score" style="text-align:center; padding:0;margin:5px 0px 5px 0px">{{ key.userUpVotes.count|subtract:key.userDownVotes.count }}</p>
+
+                            {% if repliesUserDisliked is None or key not in repliesUserDisliked %}
+                                <img style="cursor: pointer;" class="vote-down" id="{{key.id}}_replyDown" src="https://i.imgur.com/G008NCi.png" width="12" height="12"/>
+                            {% else %}
+                                <img style="cursor: pointer;" class="vote-down selected" id="{{key.id}}_replyDown" src="https://i.imgur.com/WxXRt2B.png" width="12" height="12"/>
+                            {% endif %}
+                        </div>
+
+
+                        <!--content-->
+                        <p id="{{key.id}}content" style="padding-bottom:10px;padding-left:10px;padding-right: 20px;padding-top: 10px;text-align:justify">{{ key.content }}
+
+
+
+                        <!--Exapnds a reply textbox to this reply-->
+                        <br/><button id="{{key.id}}replyButton" onclick="expandTextbox('{{key.id}}')" style="display:''; background:none; border:none; padding-top:17px; padding-left:3px; cursor: pointer;">reply</button>
+
+
+
+                        <!--If the user wrote this reply, can edit and can delete-->
+                        {% if user.username == key.user.username %}
+                            <button id="{{key.id}}editButton" style="display:''; background:none; border:none;padding:0;cursor: pointer;margin-right:5px" onclick="expandEdit('{{key.id}}')">edit</button>
+                            <a id="{{key.id}}deleteButton" href="{% url 'discuss:deleteReply' organization.id category.id post.id key.id %}"><button style=" background:none; border:none;padding:0;cursor: pointer;margin-right:5px">delete</button></a>
+                            {% endif %}
+
+
+
+                        <!--Hidden reply textbox that appears when reply button is clicked-->
+                        <form id={{key.id}} style="display:none" action="{% url 'discuss:submitSubReply' organization.id category.id post.id key.id %}" method="post">
+                            {% csrf_token %}
+                            <div style="margin-left:20px">
+                                {{ form }}
+                            </div>
+                            <br/><input type="submit" value="Submit" style="margin-left: 17px;margin-bottom:10px;margin-right:5px" /><input type="button" value="Cancel" onclick="contractTextbox('{{key.id}}')"/>
+                        </form>
+
+
+
+                        <!--Hidden edit textbox that appears when edit button is clicked-->
+                        <form id="{{key.id}}edit" style="display:none" action="{% url 'discuss:editReply' organization.id category.id post.id key.id %}" method="post">
+                            {% csrf_token %}
+                            <textarea style="margin-left:10px;height:100px;width:300px;" name="{{key.id}}_editTextbox" id="{{key.id}}_editTextbox">{{key.content}}</textarea><br/>
+                            <br/><input type="submit" value="Save" /><input type="button" value="Cancel" onclick="contactEdit('{{key.id}}')"/>
+                        </form>
+
+                    </div>
+                </li>
+
+                <!--This is the sub reply-->
+                {% for item in valuesList %}
+                    <li>
+                        <div style="padding-left:40px">
+                            <div style="background-color: #F8F7F7; border-radius: 8px; padding:0px; width:100%">
+                                <p style="height:4px; color:grey; padding-top:10px;padding-left:10px"> <a style="text-decoration:none" href="{% url 'user_profiles:ProfileView' item.user %}">{{ item.user }}</a> {{ item.pub_date|timesince }} ago</p>
+
+                                <!--liking/disliking-->
+                                <div class="vote-buttons" style="float:right; vertical-align: middle; margin-left: 10px; margin-right: 20px; padding-left:5px; padding-bottom:0px">
+                                    {% if repliesUserLiked is None or item not in repliesUserLiked %}
+                                        <img style="cursor: pointer;" class="vote-up" id="{{item.id}}_replyUp"  src="https://i.imgur.com/3Pey35k.png" width="12" height="12"/>
+                                    {% else %}
+                                        <img style="cursor: pointer;" class="vote-up selected" id="{{item.id}}_replyUp" src="https://i.imgur.com/MKzD4pl.png" width="12" height="12"/>
+                                    {% endif %}
+
+                                    <p id="{{item.id}}_score" style="text-align:center; padding:0;margin:5px 0px 5px 0px">{{ item.userUpVotes.count|subtract:item.userDownVotes.count }}</p>
+
+                                    {% if repliesUserDisliked is None or item not in repliesUserDisliked %}
+                                        <img style="cursor: pointer;" class="vote-down" id="{{item.id}}_replyDown" src="https://i.imgur.com/G008NCi.png" width="12" height="12"/>
+                                    {% else %}
+                                        <img style="cursor: pointer;" class="vote-down selected" id="{{item.id}}_replyDown" src="https://i.imgur.com/WxXRt2B.png" width="12" height="12"/>
+                                    {% endif %}
+                                </div>
+
+                                <p id="{{item.id}}content" style="padding-left:10px;padding-right: 20px;padding-top: 10px;text-align:justify">
+                                    {% if item.parent.parent != null %}
+                                        <strong>@ {{ item.parent.user }}</strong>:
+                                    {% endif %}
+                                    {{ item.content }}
+                                </p>
+
+                                <button id="{{item.id}}replyButton" onclick="expandTextbox('{{item.id}}')" style="display:''; background:none; border:none;padding:0;cursor: pointer;padding-left:10px;padding:10px">reply</button>
+
+                                {% if user.username == item.user.username %}
+                                    <button id="{{item.id}}editButton" style="display:''; background:none; border:none;padding:0;cursor: pointer;margin-right:5px" onclick="expandEdit('{{item.id}}')">edit</button>
+                                    <a id="{{item.id}}deleteButton" href="{% url 'discuss:deleteReply' organization.id category.id post.id item.id %}"><button style=" background:none; border:none;padding:0;cursor: pointer;margin-right:5px">delete</button></a>
+                                {% endif %}
+
+                                <form id={{item.id}} style="display:none"action="{% url 'discuss:submitSubReply' organization.id category.id post.id item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <div style="margin-left:20px">
+                                        {{ form }}
+                                    </div>
+                                    <br/><input type="submit" value="Submit" style="margin-left: 17px;margin-bottom:10px;margin-right:5px"/><input type="button" value="Cancel" onclick="contractTextbox('{{item.id}}')"/>
+                                </form>
+
+                                 <!--Hidden edit textbox that appears when edit button is clicked-->
+                                <form id="{{item.id}}edit" style="display:none" action="{% url 'discuss:editReply' organization.id category.id post.id item.id %}" method="post">
+                                    {% csrf_token %}
+                                    <textarea style="margin-left:10px;height:100px;width:300px;" name="{{item.id}}_editTextbox" id="{{item.id}}_editTextbox">{{item.content}}</textarea><br/>
+                                    <br/><input type="submit" value="Save" /><input type="button" value="Cancel" onclick="contactEdit('{{item.id}}')"/>
+                                </form>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+    function expandTextbox(item_id){
+        document.getElementById(item_id).style.display = 'block';
+        }
+
+    function contractTextbox(item_id){
+        document.getElementById(item_id).style.display = 'none';
+        }
+
+    function expandEdit(item_id){
+        var textid = item_id + "edit";
+        var contentid = item_id + "content";
+        var replyB = item_id + "replyButton";
+        var editB = item_id + "editButton";
+        var deleteB = item_id + "deleteButton";
+        document.getElementById(textid).style.display = 'block';
+        document.getElementById(contentid).style.display = 'none';
+        document.getElementById(replyB).style.display = 'none';
+        document.getElementById(editB).style.display = 'none';
+        document.getElementById(deleteB).style.display = 'none';
+    }
+
+    function contactEdit(item_id){
+        var textid = item_id + "edit";
+        var contentid = item_id + "content";
+        var replyB = item_id + "replyButton";
+        var editB = item_id + "editButton";
+        var deleteB = item_id + "deleteButton";
+        document.getElementById(textid).style.display = 'none';
+        document.getElementById(contentid).style.display = 'block';
+        document.getElementById(replyB).style.display = '';
+        document.getElementById(editB).style.display = '';
+        document.getElementById(deleteB).style.display = '';
+    }
+    </script>
+
+    <script>
+        $(document).ready(function()
+        {
+            $('div.vote-buttons img.vote-up').click(function() {
+               var id = this.id;
+               var replyNum = id.split("_")[0];
+               var contentId = replyNum + '_score';
+               var oppositeId1 = replyNum + '_replyDown';
+
+               var vote_type = 'up';
+               var clicked = $('#' + id);
+               if (clicked.hasClass('selected'))
+               {
+                    var vote_action = 'recall-vote';
+                    $.post("{% url 'discuss:replyVote' %}", {id:replyNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/3Pey35k.png');
+                            clicked.removeClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                        }
+                    });
+               }
+               else
+               {
+                    var vote_action = 'vote';
+                    $.post("{% url 'discuss:replyVote' %}", {id:replyNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/MKzD4pl.png');
+                            clicked.addClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+
+                            var opposite = $('#' + oppositeId1);
+                            if (opposite.hasClass('selected')){
+                                opposite.removeAttr('src');
+                                opposite.attr('src','https://i.imgur.com/G008NCi.png');
+                                opposite.removeClass('selected');
+                            }
+                        }
+                    });
+               }
+            });
+            $('div.vote-buttons img.vote-down').click(function() {
+               var id = this.id;
+               var replyNum = id.split("_")[0];
+               var contentId = replyNum + '_score';
+               var oppositeId1 = replyNum + '_replyUp';
+
+               var vote_type = 'down';
+               var clicked = $('#' + id);
+               if (clicked.hasClass('selected'))
+               {
+                    var vote_action = 'recall-vote';
+                    $.post("{% url 'discuss:replyVote' %}", {id:replyNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/G008NCi.png');
+                            clicked.removeClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                        }
+                    });
+               }
+               else
+               {
+                    var vote_action = 'vote';
+                    $.post("{% url 'discuss:replyVote' %}", {id:replyNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/WxXRt2B.png');
+                            clicked.addClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+
+                            var opposite = $('#' + oppositeId1);
+                            if (opposite.hasClass('selected')){
+                                opposite.removeAttr('src');
+                                opposite.attr('src','https://i.imgur.com/3Pey35k.png')
+                                opposite.removeClass('selected');
+                            }
+                        }
+                    });
+               }
+            });
+
+            // post
+
+            $('div.vote-buttons img.vote-up-post').click(function() {
+                var id = this.id;
+                var postNum = id.split("_")[0];
+                var contentId = postNum + '_score';
+                var oppositeId1 = postNum + '_postDown';
+
+                var vote_type = 'up';
+                var clicked = $('#' + id);
+                if (clicked.hasClass('selected'))
+                {
+                    var vote_action = 'recall-vote';
+                    $.post("{% url 'discuss:postVote' %}", {id:postNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/3Pey35k.png');
+                            clicked.removeClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                        }
+                    });
+               }
+               else
+               {
+                    var vote_action = 'vote';
+                    $.post("{% url 'discuss:postVote' %}", {id:postNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/MKzD4pl.png');
+                            clicked.addClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+
+                            var opposite = $('#' + oppositeId1);
+                            if (opposite.hasClass('selected')){
+                                opposite.removeAttr('src');
+                                opposite.attr('src','https://i.imgur.com/G008NCi.png');
+                                opposite.removeClass('selected');
+                            }
+                        }
+                    });
+               }
+            });
+
+            $('div.vote-buttons img.vote-down-post').click(function() {
+                var id = this.id;
+                var postNum = id.split("_")[0];
+                var contentId = postNum + '_score';
+                var oppositeId1 = postNum + '_postUp';
+
+                var vote_type = 'down';
+                var clicked = $('#' + id);
+                if (clicked.hasClass('selected'))
+                {
+                    var vote_action = 'recall-vote';
+                    $.post("{% url 'discuss:postVote' %}", {id:postNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/G008NCi.png');
+                            clicked.removeClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                        }
+                    });
+               }
+               else
+               {
+                    var vote_action = 'vote';
+                    $.post("{% url 'discuss:postVote' %}", {id:postNum, type:vote_type, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+
+                            clicked.removeAttr('src');
+                            clicked.attr('src', 'https://i.imgur.com/WxXRt2B.png');
+                            clicked.addClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+
+                            var opposite = $('#' + oppositeId1);
+                            if (opposite.hasClass('selected')){
+                                opposite.removeAttr('src');
+                                opposite.attr('src','https://i.imgur.com/3Pey35k.png')
+                                opposite.removeClass('selected');
+                            }
+                        }
+                    });
+               }
+            });
+        });
+    </script>
 
 {% endwith %}
 {% endblock %}
