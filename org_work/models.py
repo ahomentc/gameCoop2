@@ -17,3 +17,13 @@ class Projects(models.Model):
 
     def __str__(self):
         return self.project_name
+
+
+class WorkSubmissions(models.Model):
+    project = models.ForeignKey(Projects, on_delete=models.CASCADE, blank=True, null=True)
+    title = models.CharField(default="", max_length=100)
+    description = models.CharField(default="", max_length=1000)
+    linkToSubmission = models.CharField(default="", max_length=1000)
+
+    def __str__(self):
+        return self.title

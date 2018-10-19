@@ -11,7 +11,7 @@
 
     <main>
         <h3 style="text-align:center">{{ project.project_name }}</h3>
-        <a href="#">Submit work</a>
+        <a href="{% url 'org_work:SubmitWorkView' organization.id project.id %}">Submit work</a>
     </main>
 
     <!--<main>-->
