@@ -187,3 +187,13 @@ def submitNewProject(request, organization_id, original_cat=None):
             })
 
 
+def SubmitWorkView(request,organization_id, project_id):
+    organization = get_object_or_404(Organizations,pk=organization_id)
+    project = get_object_or_404(Projects, pk=project_id)
+
+    projects_list = Projects.objects.filter(organization=organization)
+    return render(request, 'org_work/submitWork.html', {'organization': organization,
+                                                               'categories_list': Categories.objects.filter(organization=organization),
+                                                               'project': project,
+                                                               'projects_list': projects_list
+                                                               })

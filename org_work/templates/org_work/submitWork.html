@@ -4,16 +4,18 @@
 {% block content2 %}
 {% with organization=organization category=category categories_list=categories_list projects_list=projects_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'org_work/org_work_style.css' %}" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <main>
         <h3 style="text-align:center">Submit Work for {{ project.project_name }}</h3>
         <form action="" method="post">
             {% csrf_token %}
-            <input type="text" id="title" name="title" />
-            <input type="text" id="description" name="description" />
-            <input type="text" id="urlToSubmission" name="urlToSubmission" />
-            <input type="submit" value="Submit" />
+            <label class="submitWork">Title: </label><input class="submitWork" type="text" id="title" name="title" /><br/>
+            <label class="submitWork">Description of work done: </label><input class="submitWork" type="text" id="description" name="description" /><br/>
+            <label class="submitWork">Task: [Auto assigned]</label><br/>
+            <label class="submitWork">Link to submission: </label><input class="submitWork" type="text" id="urlToSubmission" name="urlToSubmission" /><br/>
+            <input class="submitWork" type="submit" value="Submit" />
         </form>
     </main>
 

@@ -16,6 +16,9 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/submitNewProject',views.submitNewProject,name='submitNewProject'),
     url(r'^(?P<organization_id>\d+)/(?P<original_cat>\d+)/submitNewProject$',views.submitNewProject,name='submitNewSubProject'),
 
+    # submit work
+    url(r'^(?P<organization_id>\d+)/projects/(?P<project_id>\d+)/SubmitWorkView', views.SubmitWorkView, name='SubmitWorkView'),
+
 
     # ajax
     url(r'(?P<organization_id>\d+)/(?P<project_id>\d+)/CreateGitRepo',GitIntegration.CreateGitRepo,name='CreateGitRepo'),
