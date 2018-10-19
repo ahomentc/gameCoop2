@@ -5,7 +5,7 @@
 <script src="http://code.interactjs.io/v1.3.4/interact.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+{% if error_message %}<p><str-ong>{{ error_message }}</str-ong></p>{% endif %}
 
 <main>
     <form action="{% url 'home:submitMonetaryDist' organization.id %}" method="post">
@@ -13,188 +13,453 @@
         <div id="forms">
             <h1 style="margin-left: 30%">Set Governance: </h1>
             <br/>
-            <h3>Choose a system: </h3>
-            <ul class="governanceButtons">
-                <li>
-                    <input type="radio" name="governance_type" id="dd" value="dd" onclick="setTypeOfSystem('dd')" />
-                    <label for="dd">Direct Democracy</label>
-                </li>
-                <li>
-                    <input type="radio" name="governance_type" id="dr" value="dr" onclick="setTypeOfSystem('dr')" />
-                    <label for="dr">Department Representative (Default)</label>
-                </li>
-                <li>
-                    <input type="radio" name="governance_type" id="Hierarchical" value="Hierarchical" onclick="setTypeOfSystem('Hierarchical')" />
-                    <label for="Hierarchical">Hierarchical</label>
-                </li>
-                <!--<li>-->
-                    <!--<input type="radio" name="governance_type" id="custom" value="custom" onclick="setTypeOfSystem('custom')" />-->
-                    <!--<label for="custom">Custom</label>-->
-                <!--</li>-->
-            </ul>
+            <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-bottom: 20px;">
+                <h3 style="margin-left: 20px;">Choose a system: </h3>
+                <ul class="governanceButtons">
+                    <li>
+                        <input type="radio" name="governance_type" id="dd" value="dd" onclick="setTypeOfSystem('dd')" />
+                        <label for="dd">Direct Democracy</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="governance_type" id="dr" value="dr" onclick="setTypeOfSystem('dr')" />
+                        <label for="dr">Department Representative (Default)</label>
+                    </li>
+                    <li>
+                        <input type="radio" name="governance_type" id="Hierarchical" value="Hierarchical" onclick="setTypeOfSystem('Hierarchical')" />
+                        <label for="Hierarchical">Hierarchical</label>
+                    </li>
+                    <!--<li>-->
+                        <!--<input type="radio" name="governance_type" id="custom" value="custom" onclick="setTypeOfSystem('custom')" />-->
+                        <!--<label for="custom">Custom</label>-->
+                    <!--</li>-->
+                </ul>
+            </div>
 
             <div id="direct_democracy" style="display:None ">
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC">
                     <p style="margin: 10px;">
-                        Super members and members make all of the decisions. Either by vote or any member decision. Members
+                        Full members and new members make all of the decisions. Either by vote or any member decision. Members
                         vote to appoint certain members to positions but those positions can be overridden by vote.
                         Members become super members after a certain criteria is reached.
                     </p>
                 </div>
-                <h3>Organizational Permissions:</h3>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Any Super Member</h4>
+                    <h3 style="margin-left: 20px;">Default Departamental Positions:</h3>
                     <ul>
                         <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVotedd" value="percentCommunityMustVotedd" /><label style="margin-left: 10px;">Percent community must vote </label>
+                            <input type="checkbox" name="default_dept_positions" id="departmentHead" value="departmentHead" checked/>
+                            <label>Department Head</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="VotingSystemdd" value="VotingSystemdd" /><label style="margin-left: 10px;">Voting system </label>
+                            <input type="checkbox" name="default_dept_positions" id="NewMemberTrainer" value="NewMemberTrainer" checked/>
+                            <label>New Member Trainer</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistrdd" value="MonetaryDistrdd" /><label style="margin-left: 10px;">Monetary distribution </label>
+                            <input type="checkbox" name="default_dept_positions" id="orgCommunicator" value="orgCommunicator" checked/>
+                            <label>Communicator with other Departments</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="MemberJoiningdd" value="MemberJoiningdd" checked /><label style="margin-left: 10px;">Adding members </label>
+                            <input type="checkbox" name="default_dept_positions" id="fullMember" value="fullMember" checked/>
+                            <label>Full Member (Super member)</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="removingMemberdd" value="removingMemberdd" /><label style="margin-left: 10px;">Removing members </label>
+                            <input type="checkbox" name="default_dept_positions" id="newMember" value="newMember" checked/>
+                            <label>New Member</label>
+                        </li>
+
+                    </ul>
+                </div>
+                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                    <h3 style="margin-left: 20px;">Default Departments:</h3>
+                    <ul>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Finance" value="Finance" checked/>
+                            <label>Finance</label>
+                            <!--<ul>-->
+                                <!--<li>-->
+                                    <!--<label style="font-style: italic;">-->
+                                        <!--How to handle join requests?-->
+                                    <!--</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="AnyMember" checked/><label>Any Member Accepts</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="AlreadyIn"/><label>Every organization member already in Finance</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="DeptHead"/><label>Department Head or Appointed Member accepts request</label><br/>-->
+                                    <!--<br/>-->
+                                    <!--<label style="font-style: italic;">-->
+                                        <!--Who makes the final decisions?-->
+                                    <!--</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceDecision" value="MembersVote" checked/><label>Members of department vote</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceDecision" value="DeptHead"/><label>Department Head or Appointed Member</label><br/>-->
+                                    <!--<br/>-->
+                                <!--</li>-->
+                            <!--</ul>-->
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusinessdd" value="directionOfBusinessdd" /><label style="margin-left: 10px;">Direction of the business </label>
+                            <input type="checkbox" name="default_departments" id="busStrategyDev" value="busStrategyDev" checked />
+                            <label>Business Strategy and Development</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="finalProductDecisionsdd" value="finalProductDecisionsdd" /><label style="margin-left: 10px;">Final product decisions </label>
+                            <input type="checkbox" name="default_departments" id="Accounting" value="Accounting" checked/>
+                            <label>Accounting</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibilitydd" value="businessPlanVisibilitydd" /><label style="margin-left: 10px;">Visibility of business plan </label>
+                            <input type="checkbox" name="default_departments" id="Recruiting" value="Recruiting" />
+                            <label>Recruiting</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteriadd" value="superMemberCriteriadd"/><label style="margin-left: 10px;">Super member criteria </label>
+                            <input type="checkbox" name="default_departments" id="RD" value="RD" checked />
+                            <label>Research and Development</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="electionSystemdd" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            <input type="checkbox" name="default_departments" id="Engineering" value="Engineering" checked />
+                            <label>Engineering</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="appointingPositionsdd" value="appointingPositionsdd" /><label style="margin-left: 10px;">Appointing positions </label>
+                            <input type="checkbox" name="default_departments" id="IT" value="IT" />
+                            <label>IT</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="MarketingAdv" value="MarketingAdv" checked />
+                            <label>Marketing and Advertising</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Administration" value="Administration" />
+                            <label>Administration</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Sales" value="Sales" />
+                            <label>Sales</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Purchasing" value="Purchasing" />
+                            <label>Purchasing</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="QualityAssurance" value="QualityAssurance" />
+                            <label>Quality assurance</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Licenses" value="Licenses" checked />
+                            <label>Licenses</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="CustomerAssurance" value="CustomerAssurance" />
+                            <label>Customer Assurance</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="ProductionInventory" value="ProductionInventory" />
+                            <label>Production and Inventory</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="SupplyChain" value="SupplyChain" />
+                            <label>Supply chain management</label>
                         </li>
                     </ul>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Super Members Vote</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVotedd" value="percentCommunityMustVotedd" checked /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystemdd" value="VotingSystemdd" checked /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistrdd" value="MonetaryDistrdd" checked /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoiningdd" value="MemberJoiningdd" /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMemberdd" value="removingMemberdd" checked /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusinessdd" value="directionOfBusinessdd" checked /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="finalProductDecisionsdd" value="finalProductDecisionsdd" checked /><label style="margin-left: 10px;">Final product decisions </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibilitydd" value="businessPlanVisibilitydd" checked /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteriadd" value="superMemberCriteriadd" checked /><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystemdd" value="electionSystemdd" checked /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositionsdd" value="appointingPositionsdd" checked /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
+                    <h3 style="margin-left: 20px;">Default Departmental Settings:</h3>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" /><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead"/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" /><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                        <h4 style="margin: 10px">Any member</h4>
+                    <h3 style="margin-left: 20px;">Financial Department Settings:</h3>
+                    <p style="margin-left: 20px">Decisions: Monetary Distribution</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Finanical Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
                         <ul>
+                            <li style="font-style: italic">Administration</li>
                             <li>
-                                <input type="checkbox" name="permissions" id="percentCommunityMustVotedd" value="percentCommunityMustVotedd" /><label style="margin-left: 10px;">Percent community must vote </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="VotingSystemdd" value="VotingSystemdd" /><label style="margin-left: 10px;">Voting system </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="MonetaryDistrdd" value="MonetaryDistrdd" /><label style="margin-left: 10px;">Monetary distribution </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="MemberJoiningdd" value="MemberJoiningdd" checked /><label style="margin-left: 10px;">Adding members </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="removingMemberdd" value="removingMemberdd" /><label style="margin-left: 10px;">Removing members </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="directionOfBusinessdd" value="directionOfBusinessdd" /><label style="margin-left: 10px;">Direction of the business </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="finalProductDecisionsdd" value="finalProductDecisionsdd" /><label style="margin-left: 10px;">Final product decisions </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" value="Changing Monetary Distribution"/><label style="margin-left: 10px;">Changing monetary distribution </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="businessPlanVisibilitydd" value="businessPlanVisibilitydd" /><label style="margin-left: 10px;">Visibility of business plan </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="superMemberCriteriadd" value="superMemberCriteriadd"/><label style="margin-left: 10px;">Super member criteria </label>
-                            </li>
-                            <li>
-                                <input type="checkbox" name="permissions" id="electionSystemdd" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
-                            </li>
-                            <li>
-                                <input type="checkbox" name="permissions" id="appointingPositionsdd" value="appointingPositionsdd" /><label style="margin-left: 10px;">Appointing positions </label>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
                             </li>
                         </ul>
                     </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" value="Changing Monetary Distribution" checked/><label style="margin-left: 10px;">Changing monetary distribution </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                        <h4 style="margin: 10px">Members vote</h4>
+                    <h3 style="margin-left: 20px;">Business Strategy and Development Department Settings:</h3>
+                    <p style="margin-left: 20px">Decisions: Direction of business. Final Product decisions. Business plan</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInBusStrategy" value="true" /><label style="margin-left: 10px;">All Members of Organization in Business Strategy and Administration Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
                         <ul>
+                            <li style="font-style: italic">Administration</li>
                             <li>
-                                <input type="checkbox" name="permissions" id="percentCommunityMustVotedd" value="percentCommunityMustVotedd" /><label style="margin-left: 10px;">Percent community must vote </label>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="VotingSystemdd" value="VotingSystemdd" /><label style="margin-left: 10px;">Voting system </label>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="MonetaryDistrdd" value="MonetaryDistrdd" /><label style="margin-left: 10px;">Monetary distribution </label>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="MemberJoiningdd" value="MemberJoiningdd" checked /><label style="margin-left: 10px;">Adding members </label>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="removingMemberdd" value="removingMemberdd" /><label style="margin-left: 10px;">Removing members </label>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="directionOfBusinessdd" value="directionOfBusinessdd" /><label style="margin-left: 10px;">Direction of the business </label>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="finalProductDecisionsdd" value="finalProductDecisionsdd" /><label style="margin-left: 10px;">Final product decisions </label>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
                             </li>
                             <li>
-                                <input type="checkbox" name="permissions" id="businessPlanVisibilitydd" value="businessPlanVisibilitydd" /><label style="margin-left: 10px;">Visibility of business plan </label>
-                            </li>
-                            <li>
-                                <input type="checkbox" name="permissions" id="superMemberCriteriadd" value="superMemberCriteriadd"/><label style="margin-left: 10px;">Super member criteria </label>
-                            </li>
-                            <li>
-                                <input type="checkbox" name="permissions" id="electionSystemdd" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
-                            </li>
-                            <li>
-                                <input type="checkbox" name="permissions" id="appointingPositionsdd" value="appointingPositionsdd" /><label style="margin-left: 10px;">Appointing positions </label>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
                             </li>
                         </ul>
                     </div>
-                <h3>Default Departmental Permissions:</h3>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                    <h3 style="margin-left: 20px;">Administration Department Settings:</h3>
+                    <p style="margin-left: 20px">Description of department / what it deals with: Percent Organization Must Vote. Voting System. Election System. Removing Members. Super member criteria</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Administration Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
             </div>
 
             <div id="mix_dept_dem" style="display:None ">
@@ -205,254 +470,422 @@
                         moderators to make their community decisions
                     </p>
                 </div>
-                <h3>Organizational Permissions (do drag and drop later):</h3>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Any moderator or representative</h4>
+                    <h3 style="margin-left: 20px;">Default Departamental Positions:</h3>
                     <ul>
                         <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" /><label style="margin-left: 10px;">Percent community must vote </label>
+                            <input type="checkbox" name="default_dept_positions" id="departmentHead" value="departmentHead" checked/>
+                            <label>Department Head</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" /><label style="margin-left: 10px;">Voting system </label>
+                            <input type="checkbox" name="default_dept_positions" id="NewMemberTrainer" value="NewMemberTrainer" checked/>
+                            <label>New Member Trainer</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr" /><label style="margin-left: 10px;">Number of moderators </label>
+                            <input type="checkbox" name="default_dept_positions" id="orgCommunicator" value="orgCommunicator" checked/>
+                            <label>Communicator with other Departments</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" /><label style="margin-left: 10px;">Who the moderators are </label>
+                            <input type="checkbox" name="default_dept_positions" id="fullMember" value="fullMember" checked/>
+                            <label>Full Member (Super member)</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" /><label style="margin-left: 10px;">Monetary distribution </label>
+                            <input type="checkbox" name="default_dept_positions" id="newMember" value="newMember" checked/>
+                            <label>New Member</label>
+                        </li>
+
+                    </ul>
+                </div>
+                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                    <h3 style="margin-left: 20px;">Default Departments:</h3>
+                    <ul>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Finance" value="Finance" checked/>
+                            <label>Finance</label>
+                            <!--<ul>-->
+                                <!--<li>-->
+                                    <!--<label style="font-style: italic;">-->
+                                        <!--How to handle join requests?-->
+                                    <!--</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="AnyMember" checked/><label>Any Member Accepts</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="AlreadyIn"/><label>Every organization member already in Finance</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceJoin" value="DeptHead"/><label>Department Head or Appointed Member accepts request</label><br/>-->
+                                    <!--<br/>-->
+                                    <!--<label style="font-style: italic;">-->
+                                        <!--Who makes the final decisions?-->
+                                    <!--</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceDecision" value="MembersVote" checked/><label>Members of department vote</label><br/>-->
+                                    <!--<input type="checkbox" name="FinanceDecision" value="DeptHead"/><label>Department Head or Appointed Member</label><br/>-->
+                                    <!--<br/>-->
+                                <!--</li>-->
+                            <!--</ul>-->
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" checked/><label style="margin-left: 10px;">Adding members </label>
+                            <input type="checkbox" name="default_departments" id="busStrategyDev" value="busStrategyDev" checked />
+                            <label>Business Strategy and Development</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" checked/><label style="margin-left: 10px;">Removing members </label>
+                            <input type="checkbox" name="default_departments" id="Accounting" value="Accounting" checked/>
+                            <label>Accounting</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" /><label style="margin-left: 10px;">Direction of the business </label>
+                            <input type="checkbox" name="default_departments" id="Recruiting" value="Recruiting" />
+                            <label>Recruiting</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" /><label style="margin-left: 10px;">Visibility of business plan </label>
+                            <input type="checkbox" name="default_departments" id="RD" value="RD" checked />
+                            <label>Research and Development</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr"/><label style="margin-left: 10px;">Super member criteria </label>
+                            <input type="checkbox" name="default_departments" id="Engineering" value="Engineering" checked />
+                            <label>Engineering</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" /><label style="margin-left: 10px;">Election System </label>
+                            <input type="checkbox" name="default_departments" id="IT" value="IT" />
+                            <label>IT</label>
                         </li>
                         <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" /><label style="margin-left: 10px;">Appointing positions </label>
+                            <input type="checkbox" name="default_departments" id="MarketingAdv" value="MarketingAdv" checked />
+                            <label>Marketing and Advertising</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Administration" value="Administration" />
+                            <label>Administration</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Sales" value="Sales" />
+                            <label>Sales</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Purchasing" value="Purchasing" />
+                            <label>Purchasing</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="QualityAssurance" value="QualityAssurance" />
+                            <label>Quality assurance</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="Licenses" value="Licenses" checked />
+                            <label>Licenses</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="CustomerAssurance" value="CustomerAssurance" />
+                            <label>Customer Assurance</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="ProductionInventory" value="ProductionInventory" />
+                            <label>Production and Inventory</label>
+                        </li>
+                        <li>
+                            <input type="checkbox" name="default_departments" id="SupplyChain" value="SupplyChain" />
+                            <label>Supply chain management</label>
                         </li>
                     </ul>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Moderators or representatives vote</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" checked /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" checked /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr" /><label style="margin-left: 10px;">Number of moderators </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" /><label style="margin-left: 10px;">Who the moderators are </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" checked /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" checked /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" checked /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" checked /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" checked /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr" checked /><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" checked /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
+                    <h3 style="margin-left: 20px;">Default Departmental Settings:</h3>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" /><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead"/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" /><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Any Super Member</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr" /><label style="margin-left: 10px;">Number of moderators </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" /><label style="margin-left: 10px;">Who the moderators are </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" checked /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr"/><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
+                    <h3 style="margin-left: 20px;">Financial Department Settings:</h3>
+                    <p style="margin-left: 20px">Decisions: Monetary Distribution</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Finanical Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" value="Changing Monetary Distribution"/><label style="margin-left: 10px;">Changing monetary distribution </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialDeptHeadPermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" value="Changing Monetary Distribution" checked/><label style="margin-left: 10px;">Changing monetary distribution </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="FinancialMembersVotePermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Super Members vote</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" checked /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr"checked  /><label style="margin-left: 10px;">Number of moderators </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" checked /><label style="margin-left: 10px;">Who the moderators are </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr" checked /><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" checked /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
+                    <h3 style="margin-left: 20px;">Business Strategy and Development Department Settings:</h3>
+                    <p style="margin-left: 20px">Decisions: Direction of business. Final Product decisions. Business plan</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInBusStrategy" value="true" /><label style="margin-left: 10px;">All Members of Organization in Business Strategy and Administration Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
                 <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Any Member</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr" /><label style="margin-left: 10px;">Number of moderators </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" /><label style="margin-left: 10px;">Who the moderators are </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" checked /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr"/><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
+                    <h3 style="margin-left: 20px;">Administration Department Settings:</h3>
+                    <p style="margin-left: 20px">Description of department / what it deals with: Percent Organization Must Vote. Voting System. Election System. Removing Members. Super member criteria</p>
+                    <input style='margin-left: 20px'; type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Administration Department </label>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Department Head</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                        <h4 style="margin: 10px">Full Members Vote</h4>
+                        <ul>
+                            <li style="font-style: italic">Administration</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                            </li>
+                            <br/>
+                            <li style="font-style: italic">Decisions</li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
-                    <h4 style="margin: 10px">Members vote</h4>
-                    <ul>
-                        <li>
-                            <input type="checkbox" name="permissions" id="percentCommunityMustVote_dr" value="percentCommunityMustVote_dr" /><label style="margin-left: 10px;">Percent community must vote </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="VotingSystem_dr" value="VotingSystem_dr" /><label style="margin-left: 10px;">Voting system </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="numberOfMods_dr" value="numberOfMods_dr" /><label style="margin-left: 10px;">Number of moderators </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="whoModsAre_dr" value="whoModsAre_dr" /><label style="margin-left: 10px;">Who the moderators are </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MonetaryDistr_dr" value="MonetaryDistr_dr" /><label style="margin-left: 10px;">Monetary distribution </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="MemberJoining_dr" value="MemberJoining_dr" checked /><label style="margin-left: 10px;">Adding members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="removingMember_dr" value="removingMember_dr" /><label style="margin-left: 10px;">Removing members </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="directionOfBusiness_dr" value="directionOfBusiness_dr" /><label style="margin-left: 10px;">Direction of the business </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="businessPlanVisibility_dr" value="businessPlanVisibility_dr" /><label style="margin-left: 10px;">Visibility of business plan </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="superMemberCriteria_dr" value="superMemberCriteria_dr"/><label style="margin-left: 10px;">Super member criteria </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="electionSystem_dr" value="electionSystem_dr" /><label style="margin-left: 10px;">Election System </label>
-                        </li>
-                        <li>
-                            <input type="checkbox" name="permissions" id="appointingPositions_dr" value="appointingPositions_dr" /><label style="margin-left: 10px;">Appointing positions </label>
-                        </li>
-                    </ul>
-                </div>
-                <h3>Default Departmental Permissions:</h3>
             </div>
 
             <div id="hierarchy" style="display:None ">
@@ -463,7 +896,7 @@
                         of their sub-departments.
                     </p>
                 </div>
-                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px; margin-bottom: 20px;">
                     <div style="margin:10px;">
                         <h3>Choose between: </h3>
                         <input type="radio"  name="board_or_sole" id="board" value="board"/> <label> Board of Directors</label>
@@ -472,7 +905,509 @@
                         <input type="radio"  name="board_or_sole" id="sole" value="sole"/> <label> Sole Leader</label>
                     </div>
                 </div>
-                <h3>Default Departmental Permissions:</h3>
+                <a id="expand_advanced_hierarchy" style="margin-left: 40%; margin-top: 20px;" href="#" onclick="expand_advanced_hierarchy()">View Advanced Settings</a>
+                <a id="hide_advanced_hierarchy" style="margin-left: 40%; margin-top: 20px; display:none" href="#" onclick="hide_advanced_hierarchy()">Hide Advanced Settings</a>
+                <div style="display: none;" id="advanced_hierarchy">
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <div style="margin:10px;">
+                            <label>Members can vote to change the governance system. They need 80% of members to vote and 70% agreement</label>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <div style="margin:10px;">
+                            <h3>Full member criteria </h3>
+                            <input type="checkbox"  name="super_member_criteria" id="min_number_days" value="min_number_days"/>
+                            <label>Member for: </label> <input style="width:45px;"  type="number" id="min_number_days_val" value="90"/> <label> days</label>
+                            <br/>
+                            <input type="checkbox"  name="super_member_criteria" value="min_number_shares"/>
+                            <label>Minimum number of shares: </label> <input style="width:45px;"  type="number" id="min_number_shares_val"  value="90"/>
+                            <br/>
+                            <input type="checkbox"  name="super_member_criteria" value="min_number_contributions"/>
+                            <label>Minimum number of accepted contributions: </label> <input style="width:45px;"  type="number" id="min_number_contributions_val"  value="10"/>
+                            <br/>
+                            <input type="checkbox"  name="super_member_criteria" value="voted_in"/>
+                            <label>Voted in by super members? </label>
+                            <br/>
+                            <input type="checkbox"  name="super_member_criteria" value="authority_accepted"/>
+                            <label>Accepted by authority? </label>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Default Departamental Positions:</h3>
+                        <ul>
+                            <li>
+                                <input type="checkbox" name="default_dept_positions" id="departmentHead" value="departmentHead" checked/>
+                                <label>Department Head</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_dept_positions" id="NewMemberTrainer" value="NewMemberTrainer" checked/>
+                                <label>New Member Trainer</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_dept_positions" id="orgCommunicator" value="orgCommunicator" checked/>
+                                <label>Communicator with other Departments</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_dept_positions" id="fullMember" value="fullMember" checked/>
+                                <label>Full Member (Super member)</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_dept_positions" id="newMember" value="newMember" checked/>
+                                <label>New Member</label>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Default Departments:</h3>
+                        <ul>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Finance" value="Finance" checked/>
+                                <label>Finance</label>
+                                <!--<ul>-->
+                                    <!--<li>-->
+                                        <!--<label style="font-style: italic;">-->
+                                            <!--How to handle join requests?-->
+                                        <!--</label><br/>-->
+                                        <!--<input type="checkbox" name="FinanceJoin" value="AnyMember" checked/><label>Any Member Accepts</label><br/>-->
+                                        <!--<input type="checkbox" name="FinanceJoin" value="AlreadyIn"/><label>Every organization member already in Finance</label><br/>-->
+                                        <!--<input type="checkbox" name="FinanceJoin" value="DeptHead"/><label>Department Head or Appointed Member accepts request</label><br/>-->
+                                        <!--<br/>-->
+                                        <!--<label style="font-style: italic;">-->
+                                            <!--Who makes the final decisions?-->
+                                        <!--</label><br/>-->
+                                        <!--<input type="checkbox" name="FinanceDecision" value="MembersVote" checked/><label>Members of department vote</label><br/>-->
+                                        <!--<input type="checkbox" name="FinanceDecision" value="DeptHead"/><label>Department Head or Appointed Member</label><br/>-->
+                                        <!--<br/>-->
+                                    <!--</li>-->
+                                <!--</ul>-->
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="busStrategyDev" value="busStrategyDev" checked />
+                                <label>Business Strategy and Development</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Accounting" value="Accounting" checked/>
+                                <label>Accounting</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Recruiting" value="Recruiting" />
+                                <label>Recruiting</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="RD" value="RD" checked />
+                                <label>Research and Development</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Engineering" value="Engineering" checked />
+                                <label>Engineering</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="IT" value="IT" />
+                                <label>IT</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="MarketingAdv" value="MarketingAdv" checked />
+                                <label>Marketing and Advertising</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Administration" value="Administration" />
+                                <label>Administration</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Sales" value="Sales" />
+                                <label>Sales</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Purchasing" value="Purchasing" />
+                                <label>Purchasing</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="QualityAssurance" value="QualityAssurance" />
+                                <label>Quality assurance</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="Licenses" value="Licenses" checked />
+                                <label>Licenses</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="CustomerAssurance" value="CustomerAssurance" />
+                                <label>Customer Assurance</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="ProductionInventory" value="ProductionInventory" />
+                                <label>Production and Inventory</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" name="default_departments" id="SupplyChain" value="SupplyChain" />
+                                <label>Supply chain management</label>
+                            </li>
+                        </ul>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Default Departmental Settings:</h3>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Department Head Control</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Member Vote Control</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" /><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead"/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" /><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Voting System</h4>
+                            <div style="margin:20px">
+                                <label>Voting Type:</label><br/>
+                                <label>Share Based</label><input type="radio" name="votingSystem" value="shareBased" checked />
+                                <label>One Vote Per Member</label><input type="radio" name="votingSystem" value="OneVotePerMember" />
+                            </div>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <div style="margin:20px">
+                                <h3>Elections </h3>
+                                <label>Do elections occur for positions?</label>
+                                <input type="radio"  name="enable_elections" value="yes"/> <label> yes</label>
+                                <input type="radio"  name="enable_elections" value="no"/> <label> no</label>
+                                <br/>
+                                <label>Frequency of elections?</label>
+                                <input style="width:45px;"  type="number" id="election_frequency" value="365" /> <label> days</label>
+                                <br/>
+                                <label>Maximum number of re-elections?</label>
+                                <input style="width:45px;"  type="number" id="max_num_reelections" value="365" />
+                            </div>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Executive Department Settings:</h3>
+                        <p style="margin-left: 20px; margin-right: 20px">
+                            Description: In charge of appointing members to departments, controlling departments, or overriding them.
+                            People in this department vote to make decisions and have no leader.
+                        </p>
+                        <input style='margin-left: 20px' type="checkbox" name="allOrgInExecutive" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Executive Department </label>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <label>Percent of department must vote: </label><input type="number" style="width:50px;" name="percentMustVoteExec">
+                                </li>
+                                <li>
+                                    <label>Voting system: </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="allowDeptVoteOwnHead" value="allow"/><label>Allow departments to vote for their own department heads?</label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="allowDeptOverride" value="allow"/><label>Allow executive to override department decisions?</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Financial Department Settings:</h3>
+                        <p style="margin-left: 20px; margin-right: 20px">
+                            Description: In charge of the financial distribution, the funding sources,
+                            and the revenue of the organization.
+                        </p>
+                        <p style="margin-left: 20px">Decisions: Monetary Distribution</p>
+                        <input style='margin-left: 20px' type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Finanical Department </label>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Department Head</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" value="Changing Monetary Distribution"/><label style="margin-left: 10px;">Changing monetary distribution </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialDeptHeadPermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Full Members Vote</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" value="Changing Monetary Distribution" checked/><label style="margin-left: 10px;">Changing monetary distribution </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="FinancialMembersVotePermission" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Business Strategy and Development Department Settings:</h3>
+                        <p style="margin-left: 20px; margin-right: 20px">
+                            Description: In charge of the direction of the business and what it provides its customers.
+                        </p>
+                        <p style="margin-left: 20px">Decisions: Direction of business. Final Product decisions. Business plan</p>
+                        <input style='margin-left: 20px'; type="checkbox" name="allOrgInBusStrategy" value="true" /><label style="margin-left: 10px;">All Members of Organization in Business Strategy and Administration Department </label>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Department Head</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Full Members Vote</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin-top: 20px;">
+                        <h3 style="margin-left: 20px;">Administration Department Settings:</h3>
+                        <p style="margin-left: 20px; margin-right: 20px;">
+                            Description: How the organization is run.
+                        </p>
+                        <p style="margin-left: 20px; margin-right: 20px;">Decisions: Removing Members</p>
+                        <input style='margin-left: 20px'; type="checkbox" name="allOrgInFinancial" value="true" /><label style="margin-left: 10px;">All Members of Organization in the Administration Department </label>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Department Head</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" /><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" /><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" /><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div style="border-width: thin; border-style: solid; border-color: #CCCCCC; margin: 20px;">
+                            <h4 style="margin: 10px">Full Members Vote</h4>
+                            <ul>
+                                <li style="font-style: italic">Administration</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="percentDepartmentMustVote" value="percentDepartmentMustVote" checked/><label style="margin-left: 10px;">Percent of department must vote </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="MemberJoining" value="MemberJoining" checked /><label style="margin-left: 10px;">Adding members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="removingMember" value="removingMember" checked/><label style="margin-left: 10px;">Removing members </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="electionSystem" value="electionSystemdd" checked/><label style="margin-left: 10px;">Election System </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="VotingSystem" value="VotingSystem" checked/><label style="margin-left: 10px;">Voting system </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="appointingPositions" value="appointingPositionsdd" checked/><label style="margin-left: 10px;">Appointing positions </label>
+                                </li>
+                                <br/>
+                                <li style="font-style: italic">Decisions</li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="acceptingRejectingContribs" value="acceptingRejectingContribs" checked/><label style="margin-left: 10px;">Accepting and Rejecting Contributions </label>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="DefaultDeptDecision" value="DeptHead" checked/><label style="margin-left: 10px;">Final Decisions</label><br/>
+                                </li>
+                                <li>
+                                    <input type="checkbox" name="permissions" id="assigningTasks" value="assigningTasks" checked/><label style="margin-left: 10px;">Assigning Tasks </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <br/><br/><br/><br/><br/>
@@ -481,6 +1416,21 @@
     </form>
 
     <script>
+
+        function expand_advanced_hierarchy()
+        {
+            document.getElementById('advanced_hierarchy').style.display = '';
+            document.getElementById('expand_advanced_hierarchy').style.display = 'none';
+            document.getElementById('hide_advanced_hierarchy').style.display = '';
+        }
+
+        function hide_advanced_hierarchy()
+        {
+            document.getElementById('advanced_hierarchy').style.display = 'none';
+            document.getElementById('expand_advanced_hierarchy').style.display = '';
+            document.getElementById('hide_advanced_hierarchy').style.display = 'none';
+        }
+
         function setTypeOfSystem(system)
         {
            if(system === 'dr')

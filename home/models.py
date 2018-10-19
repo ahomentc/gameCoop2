@@ -51,97 +51,69 @@ class MonetaryDistribution(models.Model):
     machineLearningShareDistr = models.BooleanField(default=False)
 
 
-# Who makes what decisions
-class AnyModOrRep(models.Model):
-    finalProductDecisions = models.BooleanField(default=True)
-    acceptingOrRejectingContribs = models.BooleanField(default=True)
-    directionOfBusiness = models.BooleanField(default=False)
-    removingMember = models.BooleanField(default=False)
-    percentCommunityMustVote = models.BooleanField(default=False)
-    numberOfMods = models.BooleanField(default=False)
-    whoModsAre = models.BooleanField(default=False)
-    MonetaryDistr = models.BooleanField(default=False)
-    VotingSystem = models.BooleanField(default=False)
-    MemberJoining = models.BooleanField(default=False)
-    contributionSharesAmount = models.BooleanField(default=False)
+class PowerStack(models.Model):
+    PercentDepartmentMustVote = models.BooleanField()
+    AddingMembers = models.BooleanField()
+    RemovingMembers = models.BooleanField()
+    ElectionSystem = models.BooleanField()
+    VotingSystem = models.BooleanField()
+    AppointingPositions = models.BooleanField()
+    CreatingPositions = models.BooleanField()
+    AcceptingContributions = models.BooleanField()
+    RejectingContributions = models.BooleanField()
+    FinalDecisions = models.BooleanField()
+    ChangingMonetaryDistribution = models.BooleanField()
+    AssigningTasks = models.BooleanField()
 
-class ModOrRepVote(models.Model):
-    finalProductDecisions = models.BooleanField(default=False)
-    acceptingOrRejectingContribs = models.BooleanField(default=False)
-    directionOfBusiness = models.BooleanField(default=True)
-    removingMember = models.BooleanField(default=True)
-    percentCommunityMustVote = models.BooleanField(default=False)
-    numberOfMods = models.BooleanField(default=False)
-    whoModsAre = models.BooleanField(default=False)
-    MonetaryDistr = models.BooleanField(default=False)
-    VotingSystem = models.BooleanField(default=False)
-    MemberJoining = models.BooleanField(default=False)
-    contributionSharesVoting = models.BooleanField(default=False)
-
-class AnyMember(models.Model):
-    finalProductDecisions = models.BooleanField(default=False)
-    acceptingOrRejectingContribs = models.BooleanField(default=False)
-    directionOfBusiness = models.BooleanField(default=False)
-    removingMember = models.BooleanField(default=False)
-    percentCommunityMustVote = models.BooleanField(default=False)
-    numberOfMods = models.BooleanField(default=False)
-    whoModsAre = models.BooleanField(default=False)
-    MonetaryDistr = models.BooleanField(default=False)
-    VotingSystem = models.BooleanField(default=False)
-    MemberJoining = models.BooleanField(default=True)
-    contributionSharesVoting = models.BooleanField(default=False)
-
-class MemberVote(models.Model):
-    finalProductDecisions = models.BooleanField(default=False)
-    acceptingOrRejectingContribs = models.BooleanField(default=True)
-    directionOfBusiness = models.BooleanField(default=False)
-    removingMember = models.BooleanField(default=False)
-    percentCommunityMustVote = models.BooleanField(default=True)
-    numberOfMods = models.BooleanField(default=True)
-    whoModsAre = models.BooleanField(default=True)
-    MonetaryDistr = models.BooleanField(default=True)
-    VotingSystem = models.BooleanField(default=True)
-    MemberJoining = models.BooleanField(default=False)
-
-    # Enable users to vote on how many shares a contribution should receive
-    contributionSharesVoting = models.BooleanField(default=True)
-
-class DirectDemocracy(models.Model):
-    percentCommunityMustVote = models.FloatField(default=30)
-    description = models.CharField(default="Every member can vote", max_length=1000)
-    organizationalJoining = models.CharField(default="MemberVote", max_length=1000)
-    communityJoining = models.CharField("AnyMember", max_length=1000)
-    defaultRemoving = models.CharField("MemberVote", max_length=1000)
+class DepartmentStack(models.Model):
+    Finance = models.BooleanField()
+    BusinessStrategyAndDevelopment = models.BooleanField()
+    Accounting = models.BooleanField()
+    Recruiting = models.BooleanField()
+    ResearchAndDevelopment = models.BooleanField()
+    Engineering = models.BooleanField()
+    IT = models.BooleanField()
+    MarketingAndAdvertising = models.BooleanField()
+    Administration = models.BooleanField()
+    Sales = models.BooleanField()
+    Purchasing = models.BooleanField()
+    QualityAssurance = models.BooleanField()
+    Licenses = models.BooleanField()
+    CustomerAssurance = models.BooleanField()
+    ProductionAndInventory = models.BooleanField()
+    SupplyChainManagement = models.BooleanField()
 
 class SystemOfGovernance(models.Model):
     organization = models.ForeignKey(Organizations, on_delete=models.CASCADE)
     category = models.ForeignKey('org_home.Categories', blank=True, null=True)
 
     # types of governance:
-    #    DirectDemocracy            Every member votes on every decision
-    #    DepartmentReps             Each department elects a member to vote on their behalf for the whole of the organization
-    #    MixDeptRepsDirectDem       Mix of Department Representatives and Direct Democracy... decisions can be made by either
-    #    BoardOfDirectors           Multiple leaders and each department has a  person in charge
-    #    OneSolDecider              One leader and each department has a person in charge
+    #    DirectDemocracy
+    #    DepartmentReps
+    #    Hierarchical
     typeFoGovernance = models.CharField(max_length=500, default='MixDeptRepsDirectDem')
 
-    ### voting ###
-    # two voting types: shareBased, and OneVotePerMember
+    # Departments organization has:
+    departments = models.ForeignKey(DepartmentStack)
+
+    # Voting System in Departments: two voting types: shareBased, and OneVotePerMember
     votingType = models.CharField(max_length=500, default='shareBased', blank=True, null=True)
-    # amount of time users can vote
-    votingLength = models.FloatField(default=172800) # 172800 seconds is 2 days
+    votingLength = models.FloatField(default=172800) # 172800 seconds is 2 days             # amount of time users can vote
 
-    # governance specific questions:
+    # Election System in Departments:
+    doElectionsOccur = models.BooleanField()
+    frequencyOfElections = models.IntegerField()
+    maxNumberReElections = models.IntegerField()
 
-    # who makes what decisions
-    AnyModOrRep = models.ForeignKey(AnyModOrRep, blank=True, null=True)
-    ModOrRepVote = models.ForeignKey(ModOrRepVote, blank=True, null=True)
-    AnyMember = models.ForeignKey(AnyMember, blank=True, null=True)
-    MemberVote = models.ForeignKey(MemberVote, blank=True, null=True)
+    # Super Member Criteria
+    minNumberMemberDays = models.IntegerField()
+    minNumberShares = models.IntegerField()
+    minNumberAcceptedContribs = models.IntegerField()
+    votedIn = models.BooleanField()
+    acceptedByAuthority = models.BooleanField()
 
+    # founders
     founders = models.ManyToManyField(User)
 
     # scenarios
     userRetainSharesAfterBanishment = models.BooleanField(default=True)
-    enableVestingPeriodNewMembers = models.BooleanField(default=False)      # vesting period where new member are not full
-                                                                            # members until certain requirements reached

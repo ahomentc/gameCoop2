@@ -5,6 +5,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from home import models as home_models
 
+from django.contrib.postgres.fields import ArrayField
+
 class Categories(models.Model):
     organization = models.ForeignKey(home_models.Organizations, on_delete=models.CASCADE, blank=True, null=True)
     # parent = models.CharField(max_length=100, blank=True, null=True)
@@ -29,3 +31,5 @@ class Positions(models.Model):
     position_name = models.CharField(max_length=250)
     position_holders = models.ManyToManyField(User, related_name='position_holders', blank=True, null=True)
     position_requesters = models.ManyToManyField(User, related_name='position_requesters', blank=True, null=True)
+    formal_powers = models.ForeignKey(home_models.PowerStack)           # hardcoded powers in the system
+    informal_powers = models.CharField(max_length=100000)                                # non hardcoded powers for other purposes

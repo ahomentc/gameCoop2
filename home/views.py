@@ -136,7 +136,6 @@ def submitMonetaryDist(request, organization_id):
 
     return HttpResponseRedirect(reverse('home:setGovernanceView', args=(organization.id,)))
 
-
 # submit creation of a new organization
 @login_required
 def submitNewOrganization(request):

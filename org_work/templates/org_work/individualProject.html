@@ -11,44 +11,49 @@
 
     <main>
         <h3 style="text-align:center">{{ project.project_name }}</h3>
-        <a target="_blank" href="https://docs.google.com/spreadsheets/d/1zgGOkRZArM1KEnqPWUmfW-rmYk6J3nKTJ28o1SXKGf0/edit?usp=sharing">Tasks</a>
-        <p>
-            The thing is that service needs to keep track of what people do so that we can compensate.
-            So either do own project management or have one that has an api that allows you to access
-            what people do.
-        </p>
-
-        <!-- Connect account to github. Ask user to log into github. Then that github username or ID is
-             linked to the groupRoots account. So we can now track contributions -->
-        <a title="GitHub" class="socialaccount_provider github" href="/accounts/github/login/?process=login">Connect account to GitHub</a><br/>
-
-        <!-- else -->
-        <!--<a href="{% url 'org_work:CreateGitRepo' organization.id project.id %}">Integrate Git (Not Now)</a><br/>-->
-        <a href="{% url 'org_work:ConnectGitHub' organization.id project.id %}">Integrate GitHub</a><br/>
-        <a href="">Connect existing GitHub repository</a><br/>
-
-
-        <a onclick="openGITURL()">Go to Repository</a>
-
-        <script>
-            function openGITURL()
-            {
-                var URL;
-                $.ajax(
-                {
-                    'async': false,
-                    'url': "{% url 'org_work:getGitURL' organization.id organization.organization_name project.id project.project_name %}",
-                    'success': function (data) {
-                        URL = data;
-                    }
-                });
-                window.open(URL);
-
-            }
-        </script>
-
-
+        <a href="#">Submit work</a>
     </main>
+
+    <!--<main>-->
+        <!--<h3 style="text-align:center">{{ project.project_name }}</h3>-->
+        <!--<a target="_blank" href="https://docs.google.com/spreadsheets/d/1zgGOkRZArM1KEnqPWUmfW-rmYk6J3nKTJ28o1SXKGf0/edit?usp=sharing">Tasks</a>-->
+        <!--<p>-->
+            <!--The thing is that service needs to keep track of what people do so that we can compensate.-->
+            <!--So either do own project management or have one that has an api that allows you to access-->
+            <!--what people do.-->
+        <!--</p>-->
+
+        <!--&lt;!&ndash; Connect account to github. Ask user to log into github. Then that github username or ID is-->
+             <!--linked to the groupRoots account. So we can now track contributions &ndash;&gt;-->
+        <!--<a title="GitHub" class="socialaccount_provider github" href="/accounts/github/login/?process=login">Connect account to GitHub</a><br/>-->
+
+        <!--&lt;!&ndash; else &ndash;&gt;-->
+        <!--&lt;!&ndash;<a href="{% url 'org_work:CreateGitRepo' organization.id project.id %}">Integrate Git (Not Now)</a><br/>&ndash;&gt;-->
+        <!--<a href="{% url 'org_work:ConnectGitHub' organization.id project.id %}">Integrate GitHub</a><br/>-->
+        <!--<a href="">Connect existing GitHub repository</a><br/>-->
+
+
+        <!--<a onclick="openGITURL()">Go to Repository</a>-->
+
+        <!--<script>-->
+            <!--function openGITURL()-->
+            <!--{-->
+                <!--var URL;-->
+                <!--$.ajax(-->
+                <!--{-->
+                    <!--'async': false,-->
+                    <!--'url': "{% url 'org_work:getGitURL' organization.id organization.organization_name project.id project.project_name %}",-->
+                    <!--'success': function (data) {-->
+                        <!--URL = data;-->
+                    <!--}-->
+                <!--});-->
+                <!--window.open(URL);-->
+
+            <!--}-->
+        <!--</script>-->
+
+
+    <!--</main>-->
 
 {% endwith %}
 {% endblock %}
