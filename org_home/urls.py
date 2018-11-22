@@ -26,6 +26,7 @@ urlpatterns = [
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/joinCategory$', views.JoinCategory, name='joinCategory'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/members$', views.membersView, name='membersView'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/moderators', views.modsView, name='modsView'),
+    url(r'^makeMod', views.makeMod, name='makeMod'),
 
     # viewing and accepting pending members of category
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/pendingMembers$', views.pendingMembersView, name='pendingMembersView'),

@@ -25,7 +25,8 @@ def IndexView(request):
 
 @login_required
 def OrganizationView(request):
-    return render(request,'home/organizations.html',{'organizations_list':Organizations.objects.all()})
+    return render(request,'home/organizations.html',{'organizations_list':Organizations.objects.all(),'member_organizations_list': Organizations.objects.filter(
+        members__id=request.user.id),})
 
 @login_required
 def newOrganizationView(request):
@@ -157,20 +158,24 @@ def submitNewOrganization(request):
         if Organizations.objects.filter(organization_name=formatedOrganizationName).exists():
             return render(request, 'home/newOrganization.html', {'error_message': formatedOrganizationName + " already exists.",})
 
+        new_organization_desc = ""
+        if "new_organization_desc" in request.POST:
+            new_organization_desc = request.POST['new_organization_desc']
+
         # create the organization, add the creator to the members list, and make the creator a moderator
-        organization = Organizations.objects.create(organization_name=formatedOrganizationName,closed_organization = closedOrganization,gateKeeper=gate_keeper)
+        organization = Organizations.objects.create(organization_name=formatedOrganizationName,description=new_organization_desc, closed_organization = closedOrganization,gateKeeper=gate_keeper)
         organization.members.add(request.user)
         organization.moderators.add(request.user)
 
         # auto create executive category
-        category = Categories.objects.create(organization=organization,parent=None,category_name="Executive",closed_category = True, gateKeeper="moderators")
+        category = Categories.objects.create(organization=organization,parent=None,category_name="Executive",closed_category = True, gateKeeper="moderators",needAcceptedContribs=True)
         category.members.add(request.user)
         category.moderators.add(request.user)
-
-        # create file system for organization and git
-        organization.save()
-        CreateOrgFiles(organization.pk)
-        CreateOrgBaseFiles(organization.pk)
+        #
+        # # create file system for organization and git
+        # organization.save()
+        # CreateOrgFiles(organization.pk)
+        # CreateOrgBaseFiles(organization.pk)
 
         return HttpResponseRedirect(reverse('home:organizations'))
     else:

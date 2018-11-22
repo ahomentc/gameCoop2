@@ -1,0 +1,76 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list projects_list=projects_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <div style="margin-top: 0px; grid-row: 2" id="feed">
+        
+        {% if not submissionsList %}
+            <h3 style='margin-top: 0; margin-left: 10px; padding-top: 0; margin-bottom: 10px;'>No Pending Contributions </h3>
+        {% else %}
+            <h3 style='margin-top: 0; margin-left: 10px; padding-top: 0; margin-bottom: 10px;'>Pending Contributions </h3>
+        {% endif %}
+        {% for submission in submissionsList %}
+            <div style="padding: 20 20 20 20; background-color: white; width:100%; margin-top: 15px; margin-right: 0px; border-style: solid;border-color: #d6d6d8;border-width: thin;border-radius: 4px;" class="contribItem" id="{{submission.id}}_item">
+                <label style='font-size: 12px; color:grey;'>Submitted by {{ submission.poster }}</label><br/>
+                <a style='font-size: 20px;font-weight:bold;' href={{ submission.linkToSubmission }}>{{ submission.title }}</a><br/><br/>
+                <label>{{ submission.description }}</label><br/><br/>
+                <div class="vote-buttons">
+                    <img style="cursor: pointer;" class="accept" id="{{submission.id}}_accept" src="{% static 'images/check.png'%}" width="16" height="16"/><label style="font-weight: bold; margin-right: 10px;"> Accept</label>
+                    <img style="cursor: pointer;" class="reject" id="{{submission.id}}_reject" src="{% static 'images/x.png'%}" width="14" height="14"/><label style="font-weight: bold"> Reject</label>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        $(document).ready(function()
+        {
+            $('div.vote-buttons img.accept').click(function() {
+                var id = this.id;
+                var submissionID = id.split("_")[0];
+                var contentId = submissionID + '_score';
+                var itemId = submissionID + '_item';
+
+                var clicked = $('#' + id);
+                var action = 'accept';
+                $.post("{% url 'org_work:acceptRejectWork' %}", {id:submissionID, action:action,
+                    csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                {
+                    if(response.includes("error")) {
+                        window.alert(response);
+                    } else{
+                        // remove the contrib from the list
+                        document.getElementById(itemId).outerHTML = "";
+                    }
+                });
+               
+            });
+            $('div.vote-buttons img.reject').click(function() {
+                var id = this.id;
+                var submissionID = id.split("_")[0];
+                var contentId = submissionID + '_score';
+                var itemId = submissionID + '_item';
+
+                var clicked = $('#' + id);
+         
+                var action = 'reject';
+                $.post("{% url 'org_work:acceptRejectWork' %}", {id:submissionID, action:action,
+                    csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                {
+                    if(response.includes("error")) {
+                        window.alert(response);
+                    } else{
+                        document.getElementById(itemId).outerHTML = "";
+                    }
+                });
+               
+            });
+        });
+    </script>
+
+{% endwith %}
+{% endblock %}

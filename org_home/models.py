@@ -22,6 +22,8 @@ class Categories(models.Model):
     closed_category = models.BooleanField()
     gateKeeper = models.CharField(max_length=30) # either all_members or moderators
 
+    needAcceptedContribs = models.BooleanField(blank=False, null=False)
+
     def __str__(self):
         return self.category_name
 

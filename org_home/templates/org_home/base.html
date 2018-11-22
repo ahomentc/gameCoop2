@@ -1,33 +1,20 @@
 {% extends "home/base.html"  %}
 {% load static %}
 
+{% block headerContent %}
+    <a style="font-size: 29px; text-decoration:none; padding-right:5px; margin-left: 33%;" href = "{% url 'org_home:index' organization.id %}">{{ organization }}</a>
+{% endblock %}   
+
 {% block content %}
 
-    <!-- Navigation bar at top of the page. To navigate between work, discuss, and vote pages. Only appears if in category -->
-    {% if category %}
-        <div id="navbar">
-            <a style="font-size: 29px; text-decoration:none; padding-right:5px;" href="{% url 'org_home:individualCategory' organization.id category.id %}">{{ category }}</a>
-            <!--if user not part of this then show join-->
-            <!--or else don't show work or polls and maybe even discussion-->
-            {% if user in category.members.all %}
-                <!--<label>|</label>-->
-                <!--<a  style="text-decoration:none; padding-left:5px; padding-right:5px" href="{% url 'org_work:index' organization.id category.id %}">Work</a>-->
-                <label>|</label>
-                <a style="text-decoration:none; padding-left:5px; padding-right:5px" href="{% url 'discuss:Index' organization.id category.id %}">Discuss</a>
-                <label>|</label>
-                <a style="text-decoration:none; padding-left:5px;" href="{% url 'vote:index' organization.id category.id %}">Vote</a>
-            {% endif %}
-        </div>
-    {% endif %}
-
     <!-- aside at left part of screen. Contains the category navigator and project navigator. -->
+    {% if user in organization.members.all %}
     <aside>
         <div id="categoriesNav">
             {% if organization_id != "" %}
-            <a style="display:block; text-align:center; font-size: 25; text-decoration:none;" href = "{% url 'org_home:index' organization.id %}">{{ organization }}</a>
+            <p style="display:block; margin-top: 0; text-align:center; font-size: 25; text-decoration:none;">Departments</p>
             <br/>
             {% endif %}
-
             <script>
                 function addExpandButton(id,name){
                     subCategories = subCategoriesAndId(name);
@@ -65,14 +52,31 @@
                             url = "{% url 'org_home:individualCategory' organization_id=organization.id category_id=123 %}".replace("123", id);
                             if (subCategoriesAndId(name)[0].length != 0)
                             {
-                                newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                                <a style='margin-left: 20px; text-decoration:none' href = " +  url + " >" + name + "</a>\
-                                <button class='expandButton' id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">></button></div>";
+                                if (name == "{{ category }}")
+                                {
+                                    newdiv.innerHTML += "<div style='margin-left:15px; margin-top:10px;' id=" + id + ">\
+                                    <a style='margin-left: 20px; color: #3a3a3a; font-weight:bold; text-decoration:none' href = " +  url + " >" + name + "</a>\
+                                    <button class='expandButton' id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">></button></div>";
+                                }
+                                else
+                                {
+                                    newdiv.innerHTML += "<div style='margin-left:15px; margin-top:10px;' id=" + id + ">\
+                                    <a style='margin-left: 20px; text-decoration:none' href = " +  url + " >" + name + "</a>\
+                                    <button class='expandButton' id=\"exp" + id + "\" onclick=\"expand('" + id + "', '" + name + "')\">></button></div>";
+                                }
                             }
                             else
                             {
-                                newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + ">\
-                                <a style='margin-left: 20px; text-decoration:none' id='link" + id + "' href = " +  url + " >" + name + "</a>";
+                                if (name == "{{ category }}")
+                                {
+                                    newdiv.innerHTML += "<div style='margin-left:15px; margin-top:10px;' id=" + id + ">\
+                                    <a style='margin-left: 20px; color: #3a3a3a; font-weight:bold; text-decoration:none' id='link" + id + "' href = " +  url + " >" + name + "</a>";
+                                }
+                                else
+                                {
+                                    newdiv.innerHTML += "<div style='margin-left:15px; margin-top:10px;' id=" + id + ">\
+                                    <a style='margin-left: 20px; text-decoration:none' id='link" + id + "' href = " +  url + " >" + name + "</a>";  
+                                }
                             }
                         }
                         document.getElementById(divName).innerHTML += "<input class='expandButton' id='closeButton" + divName + "' type=button value='v' onclick=\"contract('" + divName + "')\"/>";
@@ -96,7 +100,11 @@
                     <!-- The executive category -->
                     {% if category.parent == None %}
                         <div id= {{ category.id }}>
-                            <a style='margin-left: 20px; text-decoration:none' href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a>
+                            {% if real_cat.category_name == "Executive" %}
+                                <a style='margin-left: 20px; color: #3a3a3a; font-weight:bold; text-decoration:none' href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a>
+                            {% else %}
+                               <a style='margin-left: 20px; text-decoration:none' href="{% url 'org_home:individualCategory' organization.id category.id %}"> {{ category }} </a>
+                            {% endif %}
                             <!-- Need to add this here in order to get button that contracts and expands -->
                             <script>addExpandButton('{{ category.id }}', '{{ category }}');</script>
                             <script>expand('{{ category.id }}', '{{ category }}');</script>
@@ -111,133 +119,23 @@
                     <script>expand('{{ ancestor.id }}', '{{ ancestor }}');</script>
                 {% endfor %}
             {% else %}
-                <p>No categories are available.</p>
+                <p>Create the first department :)</p>
             {% endif %}
 
             <br/>
             {% if category %}
-                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newSubCategory' organization.id category.id %}">Create New Branch</a>
+                <div style='background-color: #4d4e4e; width:160px; height: 20px; text-align: center; padding-top: 3px; margin-left: 20px; border-radius: 7px;'>
+                    <a style='color:white; font-size: 13px; text-decoration:none' href = "{% url 'org_home:newSubCategory' organization.id category.id %}">Create New Department</a>
+                </div>
             {% else %}
-                <a style='margin-left: 20px; text-decoration:none' href = "{% url 'org_home:newCategory' organization.id %}">Create New Branch</a>
+                <div style='background-color: #4d4e4e; width:160px; height: 20px; text-align: center; padding-top: 3px; margin-left: 20px; border-radius: 7px;'>
+                    <a style='color:white; font-size: 13px; text-decoration:none' href = "{% url 'org_home:newCategory' organization.id %}">Create New Department</a>
+                </div>
             {% endif %}
         </div>
 
-
-
-        <!-- Project sidebar -->
-        <!-- If no category (at org homepage) then show all the projects in nested way -->
-        <div id="projMenu">
-            {% if category  %}
-                <h1 style="font-size: 21px; text-align: center;">{{ category }} Projects</h1>
-            {% else %}
-                <h1 style="font-size: 21px; text-align: center;">{{ organization }} Projects</h1>
-            {% endif %}
-            <br/>
-
-            <script>
-                function addExpandProjButton(id,name){
-                    if (subProjectsAndId(name)[0].length != 0){
-                        document.getElementById(id).innerHTML += "<button class='expandButton' id=\"expProj" + id + "\" onclick=\"expandProj('" + id + "', '" + name + "')\">></button></div>";
-                    }
-                }
-                function subProjectsAndId(parent_name){
-                    var subProjectList = [];
-                    var subProjectIdList = [];
-                    {% for project in projects_list %}
-                        if ("{{ project.parent }}" == parent_name){
-                            var c = "{{ project.project_name }}";
-                            var id = "{{ project.id }}_Proj";
-                            subProjectList.push(c);
-                            subProjectIdList.push(id);
-                        }
-                    {% endfor %}
-                    return [subProjectList,subProjectIdList]
-                }
-                <!-- Will expand to show the list of subprojects -->
-                function expandProj(divName,parent_name){
-                    subProjects = subProjectsAndId(parent_name);
-                    var subProjectsList = subProjects[0];
-                    var subProjectsIdList = subProjects[1];
-                    var newdiv = document.createElement('div');
-                    newdiv.id = "closeProj" + divName;
-                    var checkOnPage =  document.getElementById(newdiv.id);
-                    if (checkOnPage == null){
-                        for (c in subProjectsList){
-                            id = subProjectsIdList[c];
-                            name = subProjectsList[c];
-                            id = id.split('_')[0];
-                            {% if category %}
-                                url = "{% url 'org_work:individualProject' organization_id=organization.id project_id=123 category_id=category.id %}".replace("123", id);
-                            {% else %}
-                                url = "{% url 'org_work:individualProjectNoCat' organization_id=organization.id project_id=123 %}".replace("123", id);
-                            {% endif %}
-                            if (subProjectsAndId(name)[0].length != 0){
-                                newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + "_Proj>\
-                                <a style='margin-left: 20px; text-decoration:none' href = " +  url + " >" + name + "</a>\
-                                <button class='expandButton' id=\"expProj" + id + "_Proj\" onclick=\"expandProj('" + id + "_Proj', '" + name + "')\">></button></div>";
-                            }
-                            else{
-                                newdiv.innerHTML += "<div style='margin-left:15px' id=" + id + "_Proj>\
-                                <a style='margin-left: 20px; text-decoration:none' href = " +  url + " >" + name + "</a>";
-                            }
-
-                        }
-                        document.getElementById(divName).innerHTML += "<input class='expandButton' id='closeButtonProj" + divName + "' type=button value='v' onclick=\"contractProj('" + divName + "')\"/>";
-                        document.getElementById(divName).appendChild(newdiv);
-                        document.getElementById("expProj" + divName).style.display='none';
-                        }
-                    }
-                // contract list of subprojects
-                function contractProj(divName){
-                    document.getElementById("closeProj" + divName).remove();
-                    document.getElementById("closeButtonProj" + divName).remove();
-                    document.getElementById("expProj" + divName).style.display = '';
-                    }
-            </script>
-
-            <!-- Displays nested categories and expanding till current page category -->
-            {% if projects_list.all %}
-                {% for project in projects_list %}
-                    <!-- The executive category -->
-                    {% if project.parent == None %}
-                        <div id={{ project.id }}_Proj>
-
-                            {% if category %}
-                                <a style='margin-left: 20px; text-decoration:none' href="{% url 'org_work:individualProject' organization.id project.id category.id %}"> {{ project }} </a>
-                            {% else %}
-                                <a style='margin-left: 20px; text-decoration:none' href="{% url 'org_work:individualProjectNoCat' organization.id project.id %}"> {{ project }} </a>
-                            {% endif %}
-
-                            {% if project.relatedParent.all|length > 0 %}
-                                <!-- Need to add this here in order to get button that contracts and expands -->
-                                <script>addExpandProjButton('{{ project.id }}_Proj', '{{ project }}');</script>
-                                <script>expandProj('{{ project.id }}_Proj', '{{ project }}');</script>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                {% endfor %}
-
-                <!-- Expand till get to current page category -->
-                {% if ancestor_projects_list %}
-                    {% for ancestor in ancestor_projects_list %}
-                        <!-- Don't need addExpandButton here because it is automatically added when executive calls it and expand
-                         adds it automatically. (No expand called on executive because it is the base so need to manually add it there) -->
-                        <script>expandProj('{{ ancestor.id }}_Proj', '{{ ancestor }}');</script>
-                    {% endfor %}
-                {% endif %}
-            {% else %}
-                <!--<p>No projects are available.</p>-->
-            {% endif %}
-
-            <br/>
-            {% if category %}
-                <a style='margin-left: 25px; text-decoration:none' href = "{% url 'org_work:newSubProject' organization.id category.id %}">Create New Project</a>
-            {% else %}
-                <a style='margin-left: 25px; text-decoration:none' href = "{% url 'org_work:newProject' organization.id %}">Create New Project</a>
-            {% endif %}
-            <a style='margin-left: 25px; text-decoration:none' href = "">Add Existing Project</a>
-        </div>
     </aside>
+    {% endif %}
 
     {% block content2 %}
     {% endblock %}

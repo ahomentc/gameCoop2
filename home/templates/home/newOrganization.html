@@ -1,22 +1,30 @@
 {% extends "home/base.html"  %}
 {% load static %}
 
+{% block headerContent %}
+    <a style="font-size: 29px; text-decoration:none; padding-right:5px; margin-left: 28%;" href="#">Create new Organization</a>
+{% endblock %}   
+
 {% block content %}
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 <main>
-    <form action="{% url 'home:submitNewPotentialOrg' %}" method="post">
+    <form action="{% url 'home:submitNewOrganization' %}" method="post">
     {% csrf_token %}
-        <h1>Create new Organization</h1>
-        <div id="forms">
+        <div style="margin-top: 20px;" id="forms">
             <label>Name: </label>
             <input type="text" name="new_organization" id="new_organization"/><br/><br/>
 
             <label>Description: </label>
             <input type="text" name="new_organization_desc" id="new_organization_desc"/><br/><br/>
+
+            <label>Payment System: </label>
+            <input type="radio" name="paymentSystem" id="bankAccount"/><label>Bank Account</label>
+            <input type="radio" name="paymentSystem" id="cryptoPayment"/><label>Crypto Currency</label><br/><br/>
+
         </div>
-        <input style="float:right" type="submit" value="Next"/>
+        <input type="submit" value="Create"/>
     </form>
 </main>
 

@@ -4,6 +4,7 @@
 {% block content2 %}
 {% with organization=organization category=category categories_list=categories_list projects_list=projects_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <main>
         {% if user in category.members.all %}
@@ -11,31 +12,29 @@
             <div class="categoryMenuItems">
                 <a style="text-decoration:none;" href="">Info</a>
             </div>
-            {% if user in category.moderators.all %}
-                <div class="categoryMenuItems">
-                    <a style="text-decoration:none;" href="">Moderator Access</a>
-                </div>
-            {% endif %}
+            <!--{% if user in category.moderators.all %}-->
+                <!--<div class="categoryMenuItems">-->
+                    <!--<a style="text-decoration:none;" href="">Moderator Access</a>-->
+                <!--</div>-->
+            <!--{% endif %}-->
             {% if category.closed_category %}
                 <div class="categoryMenuItems">
                     <a style="text-decoration:none;" href="{% url 'org_home:pendingMembersView' organization.id category.id %}">Pending Members</a><br/>
                 </div>
             {% endif %}
-            <div class="categoryMenuItems">
-                <a style="text-decoration:none;" href="">Files</a>
-            </div>
+            <!--<div class="categoryMenuItems">-->
+                <!--<a style="text-decoration:none;" href="">Files</a>-->
+            <!--</div>-->
         {% endif %}
 
         {% if user in category.pending_members.all %}
-            <p>Pending membership</p>
+            <p style="font-style: italic; margin-bottom: 0; margin-left: 10px;">Pending membership</p>
         {% endif %}
 
         {% if user not in category.members.all %}
             <br/>
             <div class="categoryMenuItems">
-                <div class="categoryMenuItems">
-                    <a style="text-decoration:none;" href="{% url 'org_home:joinCategory' organization.id category.id %}">Join</a>
-                </div>
+                <a style="text-decoration:none;" href="{% url 'org_home:joinCategory' organization.id category.id %}">Join</a>
             </div>
             <div class="categoryMenuItems">
                 <a style="text-decoration:none;" href="">Info</a><br/>
@@ -43,28 +42,93 @@
         {% endif %}
 
         <div class="categoryMenuItems">
-            <a style="text-decoration:none;" href="#">External Resources / Tools</a>
-        </div>
-        <div class="categoryMenuItems">
             <a style="text-decoration:none;" href="{% url 'org_home:membersView' organization.id category.id %}">Members</a>
         </div>
         <div class="categoryMenuItems">
             <a style="text-decoration:none;" href="{% url 'org_home:modsView' organization.id category.id %}">Moderators</a>
         </div>
-        <div class="categoryMenuItems">
-            <a style="text-decoration:none;" href="{% url 'org_home:positionsView' organization.id category.id %}">Positions</a>
-        </div>
-        <div class="categoryMenuItems">
-            <a style="text-decoration:none;" href="">Training</a>
-        </div>
-
     </main>
 
-    <div id="feed">
-    <h2>Activity Feed</h2>
-        <a href="">Jared changed the logo</a> <a href="">Yay</a> <a href="">Nay</a> <a href="">Discuss</a>
-    </div>
+    {% if user in category.members.all %}
+        <div id="feed">
+            <h3 style='margin-top: 30; margin-left: 10px; padding-top: 0; margin-bottom: 10px;'>Contributions </h3>
+            {% if user in category.moderators.all %}
+                {% if category.needAcceptedContribs %}
+                    <div style="background-color: #4d4e4e; width:195px; height: 25px; text-align: center; padding-top: 5px; border-radius: 7px; margin-left: 10px; margin-top: 10px;">
+                        <a style="text-decoration:none; color:white;" href="{% url 'org_work:pendingWork' organization.id category.id %}">Pending Contributions ({{ num_pending }})</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <!-- <div style="width:100%; border-style:solid; border-color: #e8e8e8; border-width: 1px; padding-top: 0px; "></div>  -->
+            <div style="background-color: #4d4e4e; width:195px; height: 25px; text-align: center; padding-top: 5px; border-radius: 7px; margin-left: 10px; margin-top: 10px;">
+                <a style="color:white;" href="{% url 'org_work:SubmitWorkView' organization.id category.id %}">Add New Contribution</a><br/>
+            </div>
+            {% for submission in submissionsList %}
+                <div style="padding: 20 20 20 20; background-color: white; width:100%; margin-top: 15px; margin-right: 0px; border-style: solid;border-color: #d6d6d8;border-width: thin;border-radius: 4px;" class="contribItem">
+                    <label style='font-size: 12px; color:grey;'>Submitted by {{ submission.poster }}</label><br/>
+                    <a style='font-size: 20px;font-weight:bold;' href={{ submission.linkToSubmission }}>{{ submission.title }}</a><br/><br/>
+                    <label>{{ submission.description }}</label><br/><br/>
 
+                    <div class="vote-buttons">
+                        {% if contribsUserLiked is None or submission not in contribsUserLiked %}
+                            <img style="cursor: pointer;" class="vote-up" id="{{submission.id}}_submissionUp" src="{% static 'images/thumbs-up.png'%}" width="16" height="16"/><label> Upvote</label>
+                        {% else %}
+                            <img style="cursor: pointer;" class="vote-up selected" id="{{submission.id}}_submissionUp" src="{% static 'images/thumbs-up-selected.png'%}" width="16" height="16"/><label style="color:#393939; font-weight:bold;"> Upvote</label>
+                        {% endif %}
+                        <label id="{{submission.id}}_score">{{ submission.user_up_votes.count }}</label>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <script>
+        $(document).ready(function()
+        {
+            $('div.vote-buttons img.vote-up').click(function() {
+               var id = this.id;
+               var submissionID = id.split("_")[0];
+               var contentId = submissionID + '_score';
+
+               var clicked = $('#' + id);
+               if (clicked.hasClass('selected'))
+               {
+                    var vote_action = 'recall-vote';
+                    $.post("{% url 'org_work:voteForContrib' %}", {id:submissionID, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', '{% static 'images/thumbs-up.png'%}')
+                            clicked.removeClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                            document.getElementById(contentId).style = color;
+                        }
+                    });
+               }
+               else
+               {
+                    var vote_action = 'vote';
+                    $.post("{% url 'org_work:voteForContrib' %}", {id:submissionID, action:vote_action,
+                        csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                    {
+                        if(response.includes("error")) {
+                            window.alert(response);
+                        } else{
+                            var responseNum = Number(response);
+                            clicked.removeAttr('src');
+                            clicked.attr('src', '{% static 'images/thumbs-up-selected.png'%}');
+                            clicked.addClass('selected');
+                            document.getElementById(contentId).innerHTML = responseNum;
+                        }
+                    });
+               }
+            });
+        });
+    </script>
 
 {% endwith %}
 {% endblock %}

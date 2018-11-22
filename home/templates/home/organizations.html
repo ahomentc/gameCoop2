@@ -1,28 +1,48 @@
 {% extends "home/base.html"  %}
 {% load static %}
 
+
+{% block headerContent %}
+    <a style="font-size: 29px; text-decoration:none; padding-right:5px; margin-left: 33%;" href="#">Organizations</a>
+{% endblock %}   
+
 {% block content %}
+<aside>
+    <div id="myOrgsNav">
+        {% if member_organizations_list %}
+            <p style="display:block; text-align:center; font-size: 20; text-decoration:none;">Your Organizations</p>
+            {% for organization in member_organizations_list %}
+                <a class="myOrgItem" href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a>
+            {% endfor %}
+        {% else %}
+            <p style="display:block; text-align:center; font-size: 20; text-decoration:none;">Member of no organizations</p>
+            <p style="display:block; text-align:center; font-size: 20; text-decoration:none;">... join or create one</p>
+        {% endif %}
+    </div>
+</aside>
 
-<div id="navbar">
-    <a style="padding-right:5px" href="{% url 'home:organizations' %}"> Organizations </a>
-    <label>|</label>
-    <a style="padding-left:5px" href="">Projects</a>
-</div>
+<div style="grid-column: 2; width:90%; " id="feed">
 
-<main>
-    <h3>Organizations:</h3>
+    <div style="background-color: #4d4e4e; width:195px; height: 25px; text-align: center; padding-top: 5px; border-radius: 7px; margin-left: 15px; margin-top: 10px;">
+        <a style="color:white;" href = "{% url 'home:newOrganization' %}">Create a New Organization</a>
+    </div>
 
     {% if organizations_list %}
-        <ul>
         {% for organization in organizations_list %}
-            <li> <a href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a> </li>
+            <div style="padding: 20 20 20 20; background-color: white; width:20%; height:100px; margin-left: 15px; margin-top: 15px; border-style: solid; border-color: #d6d6d8;border-width: thin; border-radius: 4px; display:inline-grid; text-align: center;">
+                <a style="font-weight: bold;" href="{% url 'org_home:index' organization.id %}"> {{ organization }} </a>
+                <p style="margin-top: 0;">{{ organization.description }}</p>
+                {% if organization.members.all.count == 1 %}
+                    <p>{{ organization.members.all.count }} member</p>
+                {% else %}
+                    <p>{{ organization.members.all.count }} members</p>
+                {% endif %}
+            </div>
         {% endfor %}
-        </ul>
     {% else %}
         <p>No organizations are available.</p>
     {% endif %}
 
-    <a href = "{% url 'home:newOrganization' %}">Create a New Organization</a>
-</main>
+</div>
 
 {% endblock %}

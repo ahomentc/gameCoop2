@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Categories
 from .models import Positions
 from org_work.models import Projects
+from org_work.models import WorkSubmissions
 from home.models import Organizations
 from .forms import ParentCategories
 
@@ -24,25 +25,27 @@ from .forms import ParentCategories
 @login_required
 def IndexView(request,organization_id):
     organization = get_object_or_404(Organizations,pk=organization_id)
+    userPercentageInOrg = round(getUserPercentageInOrg(organization, request.user) * 100,3)
     return render(request, 'org_home/index.html',
                   { 'organization': organization,
                     'member_categories_list': Categories.objects.filter(members__id=request.user.id,organization=organization),
                     'categories_list':Categories.objects.filter(organization=organization),
                     'projects_list': Projects.objects.filter(organization=organization),
+                    'userPercentageInOrg': userPercentageInOrg,
                   })
 
 # list of all members in an organization
 @login_required
 def orgMembersView(request,organization_id):
     organization = get_object_or_404(Organizations,id=organization_id)
-    return render(request,'org_home/org_members.html',{'organization':organization,})
+    return render(request,'org_home/org_members.html',{'organization':organization,'categories_list':Categories.objects.filter(organization=organization)})
 
 # list of pending members in an organization
 @login_required
 def orgPendingMembersView(request,organization_id):
     # this html is also called in GrantAccess
     organization = get_object_or_404(Organizations,id=organization_id)
-    return render(request,'org_home/org_pending_members.html',{'organization':organization,})
+    return render(request,'org_home/org_pending_members.html',{'organization':organization,'categories_list':Categories.objects.filter(organization=organization)})
 
 # join the organization
 @login_required
@@ -96,15 +99,46 @@ def CategoryView(request,organization_id):
 def IndividualCategoryView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
+    real_cat = category
     subCategories = Categories.objects.filter(parent=category)
     ancestorCategories = getCategoryAncestors(category_id)
     projects_list = Projects.objects.filter(organization=organization,category=category)
+
+    if category.needAcceptedContribs:
+        submissionsList = WorkSubmissions.objects.filter(
+                organization=organization,
+                category=category,
+                accepted=True,
+            ).order_by('-pub_date')[:10]
+    else:
+        submissionsList = WorkSubmissions.objects.filter(
+                organization=organization,
+                category=category,
+            ).order_by('-pub_date')[:10]
+    
+    no_subs_message=""
+    if len(submissionsList) == 0:
+        no_subs_message = "No submissions here yet"
+
+    contribsUserLiked = getContribsUserLiked(request.user, organization, category)
+
+    num_pending = WorkSubmissions.objects.filter(
+                organization=organization,
+                category=category,
+                accepted=False,
+                ).count()
+
     return render(request,'org_home/individualCategory.html',{'organization':organization,
                                                             'category': category,
+                                                            'real_cat' : real_cat,
                                                             'subCategories':subCategories,
                                                             'categories_list':Categories.objects.filter(organization=organization,),
                                                             'ancestor_categories_list':ancestorCategories,
-                                                            'projects_list':projects_list
+                                                            'projects_list':projects_list,
+                                                            'submissionsList': submissionsList,
+                                                            'no_subs_message': no_subs_message,
+                                                            'contribsUserLiked': contribsUserLiked,
+                                                            'num_pending': num_pending,
                                                             })
 
 # --- helper functions -----
@@ -124,6 +158,61 @@ def userInCategory(request):
     if request.user in category.members.all():
         return HttpResponse(1)
     return HttpResponse(0)
+
+def getContribsUserLiked(user, organization, category):
+    allContribs = WorkSubmissions.objects.filter(organization=organization,category=category)
+    contribs = []
+    for contrib in allContribs:
+        if user in contrib.user_up_votes.all():
+            contribs.append(contrib)
+    return contribs
+
+# def getUserPercentageInCategory(organization, category, user):
+#     # total number of points in category (post * likes per post)
+#     numCategoryPoints = 0
+
+#     # total number of points user has in category
+#     numUserPointsInCat = 0
+
+#     # get all the submissions in the category
+#     categorySubmissions = WorkSubmissions.objects.filter(organization=organization, category=category)
+#     for submission in categorySubmissions:
+#         numCategoryPoints += (1 + submission.user_up_votes.count())
+
+
+
+#     userSubmissions = WorkSubmissions.objects.filter(organization=organization, category=category, poster=user)
+#     for submission in userSubmissions:
+#         numUserPointsInCat += (1 + submission.user_up_votes.count())
+
+#     if(numCategoryPoints > 0):
+#         percentUsersSubsInCat = numUserPointsInCat / numCategoryPoints
+#         return percentUsersSubsInCat
+
+#     return 0
+
+def getUserPercentageInOrg(organization, user):
+    # total number of points in org (post * likes per post)
+    numOrgPoints = 0
+
+    # total number of points user has in category
+    numUserPointsInOrg = 0
+
+    # get all the submissions in the category
+    orgSubmissions = WorkSubmissions.objects.filter(organization=organization, accepted=True)
+    for submission in orgSubmissions:
+        numOrgPoints += (1 + submission.user_up_votes.count())
+
+    userSubmissions = WorkSubmissions.objects.filter(organization=organization, poster=user, accepted=True)
+
+    for submission in userSubmissions:
+        numUserPointsInOrg += (1 + submission.user_up_votes.count())
+
+    if(numOrgPoints > 0):
+        percentUsersSubsInOrg = numUserPointsInOrg / numOrgPoints
+        return percentUsersSubsInOrg
+
+    return 0
 
 # ---- creating a new category -----
 
@@ -172,13 +261,18 @@ def submitNewCategory(request,organization_id,category_id=None):
                 # if has no parent make "executive" the parent of this category
                 parent = Categories.objects.filter(organization=organization,category_name="Executive")[0]
 
+            moderator_work_approval = False
+            if 'moderator_work_approval' in request.POST and request.POST['moderator_work_approval'] == "on":
+                moderator_work_approval = True
+
             # create the category
             if parent.category_name == "Executive" or gate_keeper == '' or (gate_keeper == "all_members" and request.user in parent.members.all()) or (gate_keeper == "moderators" and request.user in parent.moderators.all()):
                 category = Categories.objects.create(organization=organization,
                                                      parent=parent,
                                                      category_name=formatedCategoryName,
                                                      closed_category = closedCategory,
-                                                     gateKeeper=gate_keeper)
+                                                     gateKeeper=gate_keeper,
+                                                     needAcceptedContribs=moderator_work_approval,)
 
                 # add the creator to the members list
                 category.members.add(request.user)
@@ -188,6 +282,8 @@ def submitNewCategory(request,organization_id,category_id=None):
                 # add all parent mods to moderators list
                 for p in parent.moderators.all():
                     category.moderators.add(p)
+
+                category.save()
 
                 return HttpResponseRedirect(reverse('org_home:individualCategory', args=(organization.id,category.id)))
             else:
@@ -228,7 +324,7 @@ def modsView(request,organization_id,category_id):
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
     ancestorCategories = getCategoryAncestors(category_id)
-    return render(request,'org_home/members.html',{'organization':organization,'category': category,
+    return render(request,'org_home/moderators.html',{'organization':organization,'category': category,
                                                    'categories_list':Categories.objects.filter(organization=organization)})
 
 
@@ -242,15 +338,21 @@ def JoinCategory(request,organization_id,category_id):
     '''
     organization = get_object_or_404(Organizations,id=organization_id)
     category = get_object_or_404(Categories,pk=category_id)
-    parent = Categories.objects.filter(organization=organization,category_name=category.parent)[0]
-
-    if request.user in parent.members.all():
-        category.members.add(request.user)
+    if category.category_name != "Executive":
+        parent = Categories.objects.filter(organization=organization,category_name=category.parent)[0]
+        if request.user in parent.members.all():
+            category.members.add(request.user)
+        else:
+            if category.closed_category == False:
+                category.members.add(request.user)
+            else:
+                category.pending_members.add(request.user)
     else:
         if category.closed_category == False:
             category.members.add(request.user)
         else:
             category.pending_members.add(request.user)
+
     return HttpResponseRedirect(reverse('org_home:individualCategory', args=(organization.id,category.id,)))
 
 # grant access to someone to become a member of a category
@@ -265,15 +367,34 @@ def GrantAccess(request,organization_id,category_id,pending_member_id):
         if request.user in category.members.all():
             category.members.add(pending_member)
             category.pending_members.remove(pending_member)
+            category.save()
     # if only moderator can add pending members to category
     elif category.gateKeeper == 'moderators':
         if request.user in category.moderators.all():
             category.members.add(pending_member)
             category.pending_members.remove(pending_member)
+            category.save()
         else:
             return render(request,'org_home/pendingMembers.html',{'organization':organization,'category': category,
                                                                   'error_message':'Must be a moderator to add user to ' +  category.category_name })
     return HttpResponseRedirect(reverse('org_home:pendingMembersView', args=(organization.id,category.id,)))
+
+# make someone a moderator (ajax)
+@login_required
+def makeMod(request):
+    category_id = int(request.POST.get('category_id'))
+    new_mod_id = int(request.POST.get('new_mod_id'))
+
+    category = get_object_or_404(Categories,pk=category_id)
+    new_mod = User.objects.get(pk=new_mod_id)
+
+    if request.user in category.moderators.all():
+        category.moderators.add(new_mod)
+        return HttpResponse("Success: Moderator Added")
+
+    else:
+        return HttpResponse("error: must be moderator")
+
 
 
 # ------------------------------------------------------------------------------------------------ #
@@ -326,6 +447,7 @@ def submitNewPosition(request,organization_id,category_id):
     for userId in membersInPos:
         posUser = User.objects.filter(pk=userId)[0]
         position.position_holders.add(posUser)
+        position.save()
 
     position.save()
 

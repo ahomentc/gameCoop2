@@ -90,7 +90,7 @@ LOGIN_REDIRECT_URL = "/home"
 ACCOUNT_SIGNUP_FORM_CLASS = 'user_profiles.forms.SignupForm'
 ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/login"
 
-SITE_ID = 1
+SITE_ID = 2
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -114,7 +114,7 @@ WSGI_APPLICATION = 'gameCoop.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'gameCoop',
+        'NAME': 'ContribPay',
         'USER': 'andrei',
         'PASSWORD': '2010Andrei',
         'HOST': '127.0.0.1',

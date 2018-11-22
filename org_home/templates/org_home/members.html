@@ -4,15 +4,43 @@
 {% block content2 %}
 {% with organization=organization category=category categories_list=categories_list %}
 <link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <main>
     <br/><br/><a href = "{% url 'org_home:individualCategory' organization.id category.id %}">< Back to {{ category }} home</a><br/>
         <ul>
         {% for member in category.members.all %}
-            <li>{{ member }} |  Positions: None</li>
+            {% if user in category.moderators.all %}
+            	<li style="margin-top: 10px;">{{ member }} 
+            		{% if member not in category.moderators.all %}
+	            		<div id="{{member.id}}_item" style="background-color: #9a9a9a; width:130px; height: 18px; display:inline-block; text-align: center; padding-bottom: 2px; border-radius: 7px;">
+	            			<a style="color:white" onclick="makeMod('{{member.id}}','{{category.id}}')" href="#">Make Moderator</a>
+	            		</div>
+            		{% endif %}
+            	</li>
+            {% else %}
+            	<li>{{ member }}</li>
+            {% endif %}
         {% endfor %}
         </ul>
     </main>
+
+    <script>
+    	function makeMod(user_id, category_id)
+    	{
+            var itemId = user_id + '_item';
+    		$.post("{% url 'org_home:makeMod' %}", {category_id:category_id, new_mod_id:user_id,
+                    csrfmiddlewaretoken:'{{ csrf_token }}'}, function(response)
+                {
+                    if(response.includes("error")) {
+                        window.alert(response);
+                    } else{
+                        // remove the contrib from the list
+                        document.getElementById(itemId).outerHTML = "";
+                    }
+                });
+    	}
+    </script>
 
 {% endwith %}
 {% endblock %}

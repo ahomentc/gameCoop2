@@ -7,11 +7,13 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+from django.utils import timezone
 import json
 
 from org_home.models import Categories
 from home.models import Organizations
 from .models import Projects
+from .models import WorkSubmissions
 from org_home.views import getCategoryAncestors
 
 def getProjectAncestors(project_id):
@@ -28,6 +30,8 @@ def IndexView(request,organization_id,category_id):
     category = get_object_or_404(Categories,pk=category_id)
     ancestorCategories = getCategoryAncestors(category_id)
     projects_list = Projects.objects.filter(organization=organization)
+
+
     # ancestorProjects = getProjectAncestors()
     return render(request, 'org_work/index.html',{'organization': organization,'category':category,
                                                   'categories_list':Categories.objects.filter(organization=organization),
@@ -130,7 +134,7 @@ def parentInSet(category,set):
     else:
         return parentInSet(category.parent,set)
 
-# submit a new category
+# submit a new project
 @login_required
 def submitNewProject(request, organization_id, original_cat=None):
     organization = get_object_or_404(Organizations,id=organization_id)
@@ -185,5 +189,128 @@ def submitNewProject(request, organization_id, original_cat=None):
                 'category': original_cat,
                 'error_message': "Please enter at least one category.",
             })
+
+
+# submit new work 
+
+def SubmitWorkView(request,organization_id, category_id):
+    organization = get_object_or_404(Organizations,pk=organization_id)
+    category = get_object_or_404(Categories, pk=category_id)
+
+    return render(request, 'org_work/submitWork.html', {'organization': organization,
+                                                               'categories_list': Categories.objects.filter(organization=organization),
+                                                               'category': category,
+                                                               })
+
+
+def submitWork(request, organization_id, category_id):
+    organization = get_object_or_404(Organizations,pk=organization_id)
+    category = get_object_or_404(Categories, pk=category_id)
+
+    if request.method == "POST":
+        if 'title' in request.POST and request.POST['title'] != '' and 'urlToSubmission' in request.POST and request.POST['urlToSubmission'] != '':
+            title = request.POST['title']
+            description = ''
+            if 'description' in request.POST:
+                description = request.POST['description']
+            urlToSubmission = request.POST['urlToSubmission']
+            if "http" not in urlToSubmission:
+                urlToSubmission = "http://" + urlToSubmission
+
+            work = WorkSubmissions.objects.create(
+                organization=organization, 
+                category=category, 
+                title=title, 
+                description=description, 
+                linkToSubmission=urlToSubmission, 
+                pub_date=timezone.now(),
+                poster=request.user,
+                accepted=False)
+
+            if request.user in category.moderators.all() or category.needAcceptedContribs == False:
+                work.accepted=True
+                work.save()
+
+            return HttpResponseRedirect(reverse('org_home:individualCategory', args=(organization_id,category_id)))
+
+        else:
+            return render(request, 'org_work/submitWork.html', {'organization': organization,
+                                                               'categories_list': Categories.objects.filter(organization=organization),
+                                                               'category': category,
+                                                               'error_message': "You must have a title and a link to your work",
+                                                               })
+
+
+#vote for a submission
+def voteForContrib(request):
+    contrib_id = int(request.POST.get('id'))
+    vote_action = request.POST.get('action')
+
+    submission = get_object_or_404(WorkSubmissions, pk=contrib_id)
+
+    thisUserUpVote = submission.user_up_votes.filter(id = request.user.id).count()
+
+    if (vote_action == 'vote'):
+        if(thisUserUpVote == 0):
+            submission.user_up_votes.add(request.user)
+        else:
+            return HttpResponse('error - already voted')
+    elif (vote_action == 'recall-vote'):
+        if (thisUserUpVote == 1):
+            submission.user_up_votes.remove(request.user)
+        else:
+            return HttpResponse('error - unknown vote type or no vote to recall')
+    else:
+        return HttpResponse('error - bad action')
+    num_votes = submission.user_up_votes.count()
+    return HttpResponse(num_votes)
+
+
+def pendingWork(request,organization_id,category_id):
+    organization = get_object_or_404(Organizations,id=organization_id)
+    category = get_object_or_404(Categories,pk=category_id)
+    real_cat = category
+    subCategories = Categories.objects.filter(parent=category)
+    ancestorCategories = getCategoryAncestors(category_id)
+
+    submissionsList = WorkSubmissions.objects.filter(
+                organization=organization,
+                category=category,
+                accepted=False,
+            ).order_by('-pub_date')[:10]
+    
+    no_subs_message=""
+    if len(submissionsList) == 0:
+        no_subs_message = "All submissions accepted"
+
+    return render(request,'org_work/pendingWork.html',{'organization':organization,
+                                                            'category': category,
+                                                            'real_cat' : real_cat,
+                                                            'subCategories':subCategories,
+                                                            'categories_list':Categories.objects.filter(organization=organization,),
+                                                            'ancestor_categories_list':ancestorCategories,
+                                                            'submissionsList': submissionsList,
+                                                            'no_subs_message': no_subs_message,
+                                                            })
+
+
+# accept for a submission
+def acceptRejectWork(request):
+    contrib_id = int(request.POST.get('id'))
+    action = request.POST.get('action')
+
+    if action == "reject":
+        submission = get_object_or_404(WorkSubmissions, pk=contrib_id)
+        # delete the submission
+        submission.delete()
+        return HttpResponse('success')
+    if action == "accept":
+        submission = get_object_or_404(WorkSubmissions, pk=contrib_id)
+        submission.accepted = True
+        submission.save()
+        return HttpResponse('success')
+    return HttpResponse('error')
+
+
 
 

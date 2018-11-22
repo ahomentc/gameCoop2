@@ -4,7 +4,8 @@ from . import views
 app_name = 'home'
 
 urlpatterns = [
-    url(r'^$', views.IndexView, name='index'),
+    # url(r'^$', views.IndexView, name='index'),
+    url(r'^$', views.OrganizationView, name='index'),
 
     url(r'^organizations', views.OrganizationView, name='organizations'),
     url(r'^newOrganization.html$',views.newOrganizationView,name='newOrganization'),

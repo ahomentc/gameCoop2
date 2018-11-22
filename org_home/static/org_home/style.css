@@ -1,9 +1,31 @@
+article {
+  grid-template-columns: 30% 60% 10%;
+}
+
 .expandButton {
     background:none;
-    border-radius:20px;
+    width:25px;
+    outline:none;
+    border-radius:30px;
+    border-style:none;
+    background-color: #4d4e4e;
+
+    cursor: pointer;
+
+    font-weight: bold;
+    color: white;
 
     margin-left:2;
     padding:3 7 7;
+}
+
+.contribItem {
+    padding: 20 20 20 20;
+    margin-top: 20px;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 4px;
 }
 
 .categoryMenuItems {
@@ -17,7 +39,26 @@
     text-align: center;
     justify-content: center;
     padding-top: 10px;
-    border-radius: 8px;
+    border-radius: 4px;
+}
+
+.myCatItem {
+    border-style: solid;
+    width: 40%;
+    height: 30px;
+    margin-left:10px;
+    margin-bottom: 10px;
+    display:inline-grid;
+    border-width: thin;
+    border-color: #d6d6d8;
+    text-align: center;
+    justify-content: center;
+    padding-top: 10px;
+    border-radius: 4px;
+}
+
+.myCatItem:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
 aside {
@@ -34,7 +75,7 @@ aside {
     margin-left: 0;
     margin-right: auto;
     margin-top: 20px;
-    width: 60%;
+    width: 50%;
     align-self: start;
     background-color:white;
     border-style: solid;
@@ -51,7 +92,7 @@ aside {
     margin-left: 0;
     margin-right: auto;
     margin-top: 10px;
-    width: 60%;
+    width: 50%;
     align-self: start;
     background-color:white;
     border-style: solid;
@@ -62,11 +103,11 @@ aside {
 }
 
 #categoriesNav {
-    margin-top:20px;
+    margin-top:0px;
     margin-right:15px;
     margin-left:auto;
     width: 200px;
-    height: 200px;
+    height: auto;
     align-self:right;
     grid-row: 1;
     background-color: white;
@@ -74,13 +115,9 @@ aside {
     border-style: solid;
     border-color: #d6d6d8;
     border-width: thin;
-    border-radius: 8px;
+    border-radius: 5px;
     overflow-y: scroll;
     overflow-x: scroll;
-}
-
-#categoriesNav:hover {
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
 #projMenu {
@@ -104,38 +141,52 @@ aside {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
 
+/*#navbar {*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: baseline;*/
+    /*grid-column: 2/3;*/
+    /*grid-row: 1;*/
+    /*width: 450px;*/
+    /*height: 40px;*/
+    /*padding-top:5px;*/
+    /*border-style: solid;*/
+    /*border-color: #d6d6d8;*/
+    /*border-width: thin;*/
+    /*margin-left: 5%;*/
+    /*margin-top: 10px;*/
+    /*border-radius: 5px;*/
+    /*background-color: white;*/
+/*}*/
 #navbar {
     display: flex;
     justify-content: center;
     align-items: baseline;
-    grid-column: 2/3;
+    grid-column: 1/3;
     grid-row: 1;
-    width: 450px;
-    height: 40px;
+    width: 100%;
     padding-top:5px;
-    border-style: solid;
-    border-color: #d6d6d8;
-    border-width: thin;
     margin-left: 5%;
-    margin-top: 10px;
-    border-radius: 5px;
-    background-color: white;
 }
 
-
 #feed {
-    padding: 20 20 20 20;
     grid-column: 2/3;
     grid-row: 3;
+    padding-left: 0px;
+    padding-right: 20px;
     margin-left: 0;
     margin-right: auto;
     margin-top: 10px;
-    width: 60%;
+    width: 50%;
     align-self: start;
-    background-color:white;
-    border-style: solid;
-    border-color: #d6d6d8;
-    border-width: thin;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05), 0 6px 20px 0 rgba(0, 0, 0, 0.05);
 }
+
+.submitWork {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+
+
