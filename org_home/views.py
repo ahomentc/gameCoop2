@@ -141,6 +141,22 @@ def IndividualCategoryView(request,organization_id,category_id):
                                                             'num_pending': num_pending,
                                                             })
 
+# ------ payment system -----
+
+# list of all members in an organization
+@login_required
+def cryptoPayView(request,organization_id):
+    organization = get_object_or_404(Organizations,id=organization_id)
+    contract_address = organization.contract_address
+    userPercentageInOrg = round(getUserPercentageInOrg(organization, request.user) * 100,3)
+    return render(request,'org_home/cryptoPay.html',{
+        'organization':organization,
+        'categories_list':Categories.objects.filter(organization=organization),
+        'contract_address':contract_address,
+        'userPercentageInOrg': userPercentageInOrg})
+
+
+
 # --- helper functions -----
 
 def getCategoryAncestors(category_id):

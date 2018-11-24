@@ -17,6 +17,8 @@ class Organizations(models.Model):
     closed_organization = models.BooleanField(default=False)
     gateKeeper = models.CharField(max_length=30, default='') # either all_members or moderators
 
+    contract_address = models.CharField(max_length=1000, default='')
+
     is_published = models.BooleanField(default=False)
 
     def __str__(self):

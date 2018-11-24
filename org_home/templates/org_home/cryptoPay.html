@@ -1,0 +1,115 @@
+{% extends "org_home/base.html" %}
+{% load static %}
+
+{% block content2 %}
+{% with organization=organization category=category categories_list=categories_list %}
+<link rel="stylesheet" type="text/css" href="{% static 'org_home/style.css' %}" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="{% static 'web3/web3.min.js'%}"></script>
+
+    <main style="text-align: center;">
+    	<br/>
+        <label style="font-weight: bold; font-size:20px;">{{ organization }} Balance: </label><br/><label style="font-size:25px;" id="org_balance"></label>
+        <br/><br/>
+        <label style="font-weight: bold; font-size:20px;">{{ organization }} Address: </label><label style="font-size:18px;">{{ contract_address }}</label>
+
+    </main>
+    <div class="deposit">
+
+        <input type="number" id="deposit_num" style="margin-bottom:20px; width:170px; height:50px; font-size:20; outline:none; padding-left: 10px;" placeholder="ETH Amount"/>
+
+        <div onclick="pay()" style="background-color: #4d4e4e; width:100%; height: 35px; padding-top: 10px; text-align: center; border-radius: 7px; cursor: pointer;">
+            <p style="color:white; margin:0; font-size:20">Deposit to {{ organization }}</p>
+        </div>
+
+    </div>
+
+    <div class="withdraw">
+
+    	<!-- <label>Your Contributions Percentage: {{ userPercentageInOrg }} %</label><br/> -->
+        <label style="font-weight: bold; font-size:20px;">Your Balance: </label><br/><label style="font-size:25px;" id="max_withdraw"></label>
+        <br/><br/>
+
+        <input type="text" id="other_addr" style="margin-bottom:20px; width:80%; height:50px; font-size:20; outline:none; padding-left: 10px;" placeholder="Enter wallet address (optional)"/>
+
+        <div onclick="withdraw()" style="background-color: #4d4e4e; width:100%; height: 35px; padding-top: 10px; text-align: center; border-radius: 7px; cursor: pointer;">
+            <p style="color:white; margin:0; font-size:20">Withdraw from {{ organization }}</p>
+        </div>
+
+    </div>
+
+	<script>
+		if (typeof web3 !== 'undefined') {
+			web3 = new Web3(web3.currentProvider);
+		} 
+		else {
+			// set the provider you want from Web3.providers
+			web3 = new Web3(new Web3.providers.HttpProvider("HTTP://127.0.0.1:7545"));
+		}
+		web3.eth.defaultAccount = web3.eth.accounts[0];
+
+		var Org = web3.eth.contract([ { "constant": false, "inputs": [ { "name": "userId", "type": "uint256" }, { "name": "userAddress", "type": "address" } ], "name": "addUserAddress", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [], "name": "deposit", "outputs": [], "payable": true, "stateMutability": "payable", "type": "function" }, { "constant": false, "inputs": [ { "name": "userId", "type": "uint256" }, { "name": "percentage", "type": "uint256" } ], "name": "distributeToIndividual", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "userIds", "type": "uint256[]" }, { "name": "userPercentages", "type": "uint256[]" } ], "name": "distributeToMultiple", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [ { "name": "percentage", "type": "uint256" } ], "name": "withdraw", "outputs": [], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": true, "inputs": [], "name": "getBal", "outputs": [ { "name": "", "type": "uint256" } ], "payable": false, "stateMutability": "view", "type": "function" } ]);
+	
+		var test_org = Org.at("{{ contract_address }}");
+
+	</script>
+
+	<script>
+		$( document ).ready(function() {
+			updateBalance();
+		});
+	</script>
+
+    <script>
+
+    	function pay()
+    	{
+    		var num = document.getElementById("deposit_num").value;
+    		var original_num = num;
+    		num = num * 1000000000000000000;
+    		num = num.toString();
+    		test_org.deposit({
+    			value: num
+    		}, function(error, result){
+    			if(!error){
+			    	console.log(result);
+			    	updateBalance();
+			    }
+			 	else
+			   		console.error(error);
+    		})
+    	}
+
+    	function updateBalance()
+    	{
+    		test_org.getBal(function(error, result){
+			  	if(!error){
+			    	console.log(result);
+			    	var num = result / 1000000000000000000;
+			    	num = num.toString();
+			    	numString = num + " Eth";
+			    	$("#org_balance").text(numString);
+			    	$("#max_withdraw").text((num * {{ userPercentageInOrg }} * .01).toFixed(5).toString() + " Eth" )
+			    }
+			 	else
+			   		console.error(error);
+		 	});
+    	}
+
+    	function withdraw()
+    	{
+    		var percentage = {{ userPercentageInOrg }};
+    		test_org.withdraw(percentage,function(error, result){
+    			if(!error){
+			    	console.log(result);
+			    	updateBalance();
+			    }
+			 	else
+			   		console.error(error);
+    		})
+    	}
+
+	</script>
+
+{% endwith %}
+{% endblock %}

@@ -181,6 +181,40 @@ aside {
     align-self: start;
 }
 
+.deposit {
+    padding: 20 20 20 20;
+    grid-column: 2/3;
+    grid-row: 3;
+    align-self: start;
+    text-align: center;
+    margin-left: 0;
+    margin-right: auto;
+    width: 50%;
+    background-color:white;
+    margin-top: 10px;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 5px;
+}
+
+.withdraw {
+    padding: 20 20 20 20;
+    grid-column: 2/3;
+    grid-row: 4;
+    align-self: start;
+    text-align: center;
+    margin-left: 0;
+    margin-right: auto;
+    width: 50%;
+    background-color:white;
+    margin-top: 10px;
+    border-style: solid;
+    border-color: #d6d6d8;
+    border-width: thin;
+    border-radius: 5px;
+}
+
 .submitWork {
     display: block;
     margin-left: auto;

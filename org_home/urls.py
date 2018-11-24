@@ -22,6 +22,9 @@ urlpatterns = [
 
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/$', views.IndividualCategoryView, name='individualCategory'),
 
+    # payment system
+    url(r'^(?P<organization_id>\d+)/cryptoPayView$', views.cryptoPayView, name='cryptoPayView'),
+
     # access to category
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/joinCategory$', views.JoinCategory, name='joinCategory'),
     url(r'^(?P<organization_id>\d+)/(?P<category_id>\d+)/members$', views.membersView, name='membersView'),
